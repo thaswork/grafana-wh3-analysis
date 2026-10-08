@@ -1,0 +1,6 @@
+.env
+datasets/steam_reviews_refunds_2024plus_collected.csv
+
+.venv/
+__pycache__/
+*.pyc
