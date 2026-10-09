@@ -1,0 +1,24 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "127.0.0.1",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "SQLTools Project Database",
+            "database": "wh3_analysis",
+            "username": "wh3_user"
+        },
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "127.0.0.1",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "SQLTools Maintenance Database",
+            "database": "postgres",
+            "username": "wh3_user"
+        }
+    ]
+}
