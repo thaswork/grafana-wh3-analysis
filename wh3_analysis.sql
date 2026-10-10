@@ -113,7 +113,6 @@ BEGIN
             ('Discount', 'SpecialDiscount', 'boolean', true, ''),
             ('Discount', 'DiscountTitle', 'text', true, ''),
             ('Discount', 'SourceUrl', 'text', false, ''),
-            ('PlayerActivity', 'Timestamp', 'timestamp with time zone', true, ''),
             ('PlayerActivity', 'Date', 'date', true, ''),
             ('PlayerActivity', 'High', 'integer', false, ''),
             ('PlayerActivity', 'Low', 'integer', false, ''),
@@ -308,9 +307,8 @@ CREATE TABLE IF NOT EXISTS public."Discount" (
     CONSTRAINT "DiscountTimeRange" CHECK ("DateTimeEnd" IS NULL OR "DateTimeEnd" > "DateTime")
 );
 
--- PlayerActivity: schema columns track PlayerActivity.csv, except for generated identity keys.
+-- PlayerActivity: schema columns track PlayerActivity.csv. Date is the natural key.
 CREATE TABLE IF NOT EXISTS public."PlayerActivity" (
-    "Timestamp" timestamp with time zone NOT NULL,
     "Date" date NOT NULL,
     "High" integer,
     "Low" integer,
@@ -381,8 +379,6 @@ CREATE INDEX IF NOT EXISTS "IdxDiscountDateTime"
     ON public."Discount" ("DateTime");
 CREATE INDEX IF NOT EXISTS "IdxDiscountDateTimeEnd"
     ON public."Discount" ("DateTimeEnd");
-CREATE INDEX IF NOT EXISTS "IdxPlayerActivityTimestamp"
-    ON public."PlayerActivity" ("Timestamp");
 CREATE INDEX IF NOT EXISTS "IdxReviewTimestampUpdated"
     ON public."Review" ("TimestampUpdated");
 CREATE INDEX IF NOT EXISTS "IdxReviewTimestampCreated"
