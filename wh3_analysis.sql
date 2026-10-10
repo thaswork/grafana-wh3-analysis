@@ -112,7 +112,6 @@ BEGIN
             ('Discount', 'HolidayDiscount', 'boolean', true, ''),
             ('Discount', 'SpecialDiscount', 'boolean', true, ''),
             ('Discount', 'DiscountTitle', 'text', true, ''),
-            ('Discount', 'SourceUrl', 'text', false, ''),
             ('PlayerActivity', 'Date', 'date', true, ''),
             ('PlayerActivity', 'High', 'integer', false, ''),
             ('PlayerActivity', 'Low', 'integer', false, ''),
@@ -289,7 +288,7 @@ CREATE TABLE IF NOT EXISTS public."Announcement" (
     CONSTRAINT "Announcement_BuildId_key" UNIQUE ("BuildId")
 );
 
--- Discount: schema columns track Discount.csv, except for generated identity keys.
+-- Discount: generated ID; SourceUrl remains in Discount.csv for human reference only.
 CREATE TABLE IF NOT EXISTS public."Discount" (
     "DiscountId" bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
     "DateTime" timestamp with time zone NOT NULL,
@@ -300,7 +299,6 @@ CREATE TABLE IF NOT EXISTS public."Discount" (
     "HolidayDiscount" boolean NOT NULL,
     "SpecialDiscount" boolean NOT NULL,
     "DiscountTitle" text NOT NULL,
-    "SourceUrl" text,
     CONSTRAINT "Discount_pkey" PRIMARY KEY ("DiscountId"),
     CONSTRAINT "DiscountPrice" CHECK ("FinalPrice" >= 0),
     CONSTRAINT "DiscountSingleType" CHECK ("NormalDiscount"::int + "SeasonalDiscount"::int + "HolidayDiscount"::int + "SpecialDiscount"::int = 1),
@@ -317,7 +315,7 @@ CREATE TABLE IF NOT EXISTS public."PlayerActivity" (
     CONSTRAINT "PlayerActivityNonnegative" CHECK (("High" IS NULL OR "High" >= 0) AND ("Low" IS NULL OR "Low" >= 0))
 );
 
--- Review: schema columns track Review.csv, except for generated identity keys.
+-- Review: prepared classification columns match Review.csv.
 CREATE TABLE IF NOT EXISTS public."Review" (
     "RecommendationId" bigint NOT NULL,
     "AuthorSteamId" bigint NOT NULL,

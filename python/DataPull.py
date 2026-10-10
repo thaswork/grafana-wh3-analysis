@@ -1,4 +1,10 @@
-"""Collect Steam reviews and daily player activity for Total War: WARHAMMER III."""
+"""Collect API source CSVs for Total War: WARHAMMER III.
+
+Files ending in Raw are intermediate collection outputs, not ingestion-ready
+datasets. ReviewRaw requires separate topic classification, and PlayerActivityRaw
+can require manual quality checks. Prepared CSVs omit the Raw suffix and are
+maintained separately; this script must never overwrite them.
+"""
 
 import argparse
 import csv
@@ -6,7 +12,7 @@ import json
 import os
 import tempfile
 import time
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import requests
@@ -123,14 +129,12 @@ def flatten_review( review ):
 	return row
 
 
-def fetch_player_activity( session, api_key ):
-	"""Fetch historical player observations and aggregate daily highs/lows."""
-	output_file = DATASETS_DIR / "PlayerActivity.csv"
+def collect_daily_observations( session, api_key ):
+	"""Aggregate intraday player observations into one daily record per date."""
+	start = date.fromisoformat( START_DATE )
+	daily = {}
 	cursor = None
 	seen_cursors = set()
-	daily = {}
-
-	print( f"Fetching player activity starting {START_DATE}..." )
 
 	while True:
 		params = { "apiKey": api_key }
@@ -139,23 +143,28 @@ def fetch_player_activity( session, api_key ):
 
 		data = get_json( session, PLAYER_ACTIVITY_URL, params, "Player activity" )
 		history = data.get( "history", [] )
+		if not isinstance( history, list ):
+			raise RuntimeError( "Player activity: unexpected history format." )
 		if not history:
 			break
 
 		for point in history:
-			date = point[ "added" ][ :10 ]
-			if date < START_DATE:
+			point_date = date.fromisoformat( point[ "added" ][ :10 ] )
+			if point_date < start:
 				continue
 
 			players = point[ "players" ]
-			if date not in daily:
-				daily[ date ] = { "High": players, "Low": players }
-			else:
-				daily[ date ][ "High" ] = max( daily[ date ][ "High" ], players )
-				daily[ date ][ "Low" ] = min( daily[ date ][ "Low" ], players )
+			if isinstance( players, bool ) or not isinstance( players, int ) or players < 0:
+				raise RuntimeError( f"Player activity: invalid player count on {point_date}." )
 
-		# The original API uses newest-to-oldest pages.
-		if history[ -1 ][ "added" ][ :10 ] < START_DATE:
+			if point_date not in daily:
+				daily[ point_date ] = { "Date": point_date.isoformat(), "High": players, "Low": players }
+			else:
+				daily[ point_date ][ "High" ] = max( daily[ point_date ][ "High" ], players )
+				daily[ point_date ][ "Low" ] = min( daily[ point_date ][ "Low" ], players )
+
+		# Games Popularity provides history in newest-to-oldest order.
+		if date.fromisoformat( history[ -1 ][ "added" ][ :10 ] ) < start:
 			break
 
 		next_cursor = data.get( "nextCursor" )
@@ -167,18 +176,73 @@ def fetch_player_activity( session, api_key ):
 		seen_cursors.add( next_cursor )
 		cursor = next_cursor
 
+	if not daily:
+		raise RuntimeError( "Player activity: no observations collected; output not replaced." )
+
+	return list( daily.values() )
+
+
+def validate_daily_rows( rows ):
+	"""Mark duplicated daily records invalid, even when their counts agree."""
+	by_date = {}
+	invalid_dates = set()
+
+	for row in rows:
+		day = date.fromisoformat( row[ "Date" ] )
+		if day in by_date:
+			invalid_dates.add( day )
+		else:
+			by_date[ day ] = dict( row )
+
+	for day in invalid_dates:
+		by_date[ day ][ "High" ] = ""
+		by_date[ day ][ "Low" ] = ""
+
+	return by_date, invalid_dates
+
+
+def complete_calendar( rows ):
+	"""Fill missing dates with blank counts without fabricating observations."""
+	by_date, invalid_dates = validate_daily_rows( rows )
+	start = date.fromisoformat( START_DATE )
+	last = max( by_date )
+	complete = []
+	missing_dates = []
+
+	day = start
+	while day <= last:
+		if day in by_date:
+			complete.append( by_date[ day ] )
+		else:
+			complete.append( { "Date": day.isoformat(), "High": "", "Low": "" } )
+			missing_dates.append( day )
+		day += timedelta( days = 1 )
+
+	return complete, missing_dates, invalid_dates
+
+
+def fetch_player_activity( session, api_key ):
+	"""Collect player observations and produce a continuous daily CSV."""
+	output_file = DATASETS_DIR / "PlayerActivityRaw.csv"
+	print( f"Fetching player activity starting {START_DATE}..." )
+	rows = collect_daily_observations( session, api_key )
+	complete, missing_dates, invalid_dates = complete_calendar( rows )
+
 	def write_rows( writer ):
-		for date in sorted( daily ):
-			writer.writerow( { "Date": date, **daily[ date ] } )
-		return len( daily )
+		writer.writerows( complete )
+		return len( complete )
 
 	count = save_csv( output_file, [ "Date", "High", "Low" ], write_rows )
 	print( f"Saved {count:,} days to {output_file}" )
+	print( f"Missing API dates filled with blank counts: {len( missing_dates ):,}" )
+	print( f"Duplicate daily dates marked invalid: {len( invalid_dates ):,}" )
+	if invalid_dates:
+		print( "Invalid dates: " + ", ".join( d.isoformat() for d in sorted( invalid_dates ) ) )
 
 
 def fetch_reviews( session ):
 	"""Fetch unique Steam reviews and write one CSV row per recommendation."""
-	output_file = DATASETS_DIR / "Review.csv"
+	output_file = DATASETS_DIR / "ReviewRaw.csv"
 	start_timestamp = int(
 		datetime.strptime( START_DATE, "%Y-%m-%d" ).replace( tzinfo = timezone.utc ).timestamp()
 	)
@@ -248,7 +312,7 @@ def fetch_reviews( session ):
 
 
 def main():
-	parser = argparse.ArgumentParser( description = "Collect player activity and Steam review CSV datasets." )
+	parser = argparse.ArgumentParser( description = "Collect raw player activity and Steam review CSVs for later preparation." )
 	parser.add_argument(
 		"api_key",
 		nargs = "?",
