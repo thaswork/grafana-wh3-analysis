@@ -1,8 +1,4 @@
 .env
-discount_events_2024plus_collected.csv
-patch_hotfix_flc_dlc_2024plus_collected.csv
-player_counts_2024plus_collected.csv
-steam_reviews_refunds_2024plus_collected.csv
 
 .venv/
 __pycache__/
