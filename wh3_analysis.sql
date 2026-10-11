@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict xYWiGbOyNwfWeSwCcJ7t98Htiuvo9SidRFvXSg8z5miYl68pTo0ZswX1nd2YzLu
+\restrict GLBpLaUjQhRKwQBMYD6VqD3VxMwJUazeq004YhzCwP28UnxXcLG8fxO2Hp39AIX
 
 -- Dumped from database version 18.6 (Debian 18.6-1.pgdg13+2)
 -- Dumped by pg_dump version 18.6 (Ubuntu 18.6-1.pgdg24.04+2)
 
--- Started on 2026-10-11 18:14:55 EDT
+-- Started on 2026-10-11 18:41:25 EDT
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -34,30 +34,30 @@ CREATE TABLE public."Build" (
     "BuildId" integer CONSTRAINT "Announcement_BuildId_not_null" NOT NULL,
     "Timestamp" timestamp with time zone CONSTRAINT "Announcement_Timestamp_not_null" NOT NULL,
     "PatchTitle" text CONSTRAINT "Announcement_PatchTitle_not_null" NOT NULL,
-    "IsPatch" boolean CONSTRAINT "Announcement_Patch_not_null" NOT NULL,
-    "IsHotfix" boolean CONSTRAINT "Announcement_Hotfix_not_null" NOT NULL,
-    "IsFreeContent" boolean CONSTRAINT "Announcement_FreeContent_not_null" NOT NULL,
-    "IsPaidContent" boolean CONSTRAINT "Announcement_PaidContent_not_null" NOT NULL,
-    "IsTopicAi" boolean CONSTRAINT "Announcement_TopicAi_not_null" NOT NULL,
-    "IsTopicBugs" boolean CONSTRAINT "Announcement_TopicBugs_not_null" NOT NULL,
-    "IsTopicCrashes" boolean CONSTRAINT "Announcement_TopicCrashes_not_null" NOT NULL,
-    "IsTopicPerformance" boolean CONSTRAINT "Announcement_TopicPerformance_not_null" NOT NULL,
-    "IsTopicBalance" boolean CONSTRAINT "Announcement_TopicBalance_not_null" NOT NULL,
-    "IsTopicCampaign" boolean CONSTRAINT "Announcement_TopicCampaign_not_null" NOT NULL,
-    "IsTopicBattles" boolean CONSTRAINT "Announcement_TopicBattles_not_null" NOT NULL,
-    "IsTopicDlc" boolean CONSTRAINT "Announcement_TopicDlc_not_null" NOT NULL,
-    "IsTopicPrice" boolean CONSTRAINT "Announcement_TopicPrice_not_null" NOT NULL,
-    "IsTopicContent" boolean CONSTRAINT "Announcement_TopicContent_not_null" NOT NULL,
-    "IsTopicMultiplayer" boolean CONSTRAINT "Announcement_TopicMultiplayer_not_null" NOT NULL,
-    "IsTopicUi" boolean CONSTRAINT "Announcement_TopicUi_not_null" NOT NULL,
-    "IsTopicGraphics" boolean CONSTRAINT "Announcement_TopicGraphics_not_null" NOT NULL,
-    "IsTopicAudio" boolean CONSTRAINT "Announcement_TopicAudio_not_null" NOT NULL,
-    "IsTopicMods" boolean CONSTRAINT "Announcement_TopicMods_not_null" NOT NULL,
-    "IsTopicDifficulty" boolean CONSTRAINT "Announcement_TopicDifficulty_not_null" NOT NULL,
-    "IsTopicUpdate" boolean CONSTRAINT "Announcement_TopicUpdate_not_null" NOT NULL,
-    "IsTopicDeveloper" boolean CONSTRAINT "Announcement_TopicDeveloper_not_null" NOT NULL,
-    "IsTopicMonetization" boolean CONSTRAINT "Announcement_TopicMonetization_not_null" NOT NULL,
-    "IsTopicOther" boolean CONSTRAINT "Announcement_TopicOther_not_null" NOT NULL
+    "IsPatch" boolean,
+    "IsHotfix" boolean,
+    "IsFreeContent" boolean,
+    "IsPaidContent" boolean,
+    "IsTopicAi" boolean,
+    "IsTopicBugs" boolean,
+    "IsTopicCrashes" boolean,
+    "IsTopicPerformance" boolean,
+    "IsTopicBalance" boolean,
+    "IsTopicCampaign" boolean,
+    "IsTopicBattles" boolean,
+    "IsTopicDlc" boolean,
+    "IsTopicPrice" boolean,
+    "IsTopicContent" boolean,
+    "IsTopicMultiplayer" boolean,
+    "IsTopicUi" boolean,
+    "IsTopicGraphics" boolean,
+    "IsTopicAudio" boolean,
+    "IsTopicMods" boolean,
+    "IsTopicDifficulty" boolean,
+    "IsTopicUpdate" boolean,
+    "IsTopicDeveloper" boolean,
+    "IsTopicMonetization" boolean,
+    "IsTopicOther" boolean
 );
 
 
@@ -73,10 +73,10 @@ CREATE TABLE public."Discount" (
     "DateTime" timestamp with time zone NOT NULL,
     "FinalPrice" numeric(19,4) NOT NULL,
     "DateTimeEnd" timestamp with time zone,
-    "IsNormalDiscount" boolean CONSTRAINT "Discount_NormalDiscount_not_null" NOT NULL,
-    "IsSeasonalDiscount" boolean CONSTRAINT "Discount_SeasonalDiscount_not_null" NOT NULL,
-    "IsHolidayDiscount" boolean CONSTRAINT "Discount_HolidayDiscount_not_null" NOT NULL,
-    "IsSpecialDiscount" boolean CONSTRAINT "Discount_SpecialDiscount_not_null" NOT NULL,
+    "IsNormalDiscount" boolean,
+    "IsSeasonalDiscount" boolean,
+    "IsHolidayDiscount" boolean,
+    "IsSpecialDiscount" boolean,
     "DiscountTitle" text NOT NULL
 );
 
@@ -122,27 +122,27 @@ CREATE TABLE public."Review" (
     "Language" text NOT NULL,
     "Text" text,
     "TimestampUpdated" timestamp with time zone NOT NULL,
-    "IsVotedUp" boolean CONSTRAINT "Review_VotedUp_not_null" NOT NULL,
-    "IsTopicAi" boolean CONSTRAINT "Review_TopicAi_not_null" NOT NULL,
-    "IsTopicBugs" boolean CONSTRAINT "Review_TopicBugs_not_null" NOT NULL,
-    "IsTopicCrashes" boolean CONSTRAINT "Review_TopicCrashes_not_null" NOT NULL,
-    "IsTopicPerformance" boolean CONSTRAINT "Review_TopicPerformance_not_null" NOT NULL,
-    "IsTopicBalance" boolean CONSTRAINT "Review_TopicBalance_not_null" NOT NULL,
-    "IsTopicCampaign" boolean CONSTRAINT "Review_TopicCampaign_not_null" NOT NULL,
-    "IsTopicBattles" boolean CONSTRAINT "Review_TopicBattles_not_null" NOT NULL,
-    "IsTopicDlc" boolean CONSTRAINT "Review_TopicDlc_not_null" NOT NULL,
-    "IsTopicPrice" boolean CONSTRAINT "Review_TopicPrice_not_null" NOT NULL,
-    "IsTopicContent" boolean CONSTRAINT "Review_TopicContent_not_null" NOT NULL,
-    "IsTopicMultiplayer" boolean CONSTRAINT "Review_TopicMultiplayer_not_null" NOT NULL,
-    "IsTopicUi" boolean CONSTRAINT "Review_TopicUi_not_null" NOT NULL,
-    "IsTopicGraphics" boolean CONSTRAINT "Review_TopicGraphics_not_null" NOT NULL,
-    "IsTopicAudio" boolean CONSTRAINT "Review_TopicAudio_not_null" NOT NULL,
-    "IsTopicMods" boolean CONSTRAINT "Review_TopicMods_not_null" NOT NULL,
-    "IsTopicDifficulty" boolean CONSTRAINT "Review_TopicDifficulty_not_null" NOT NULL,
-    "IsTopicUpdate" boolean CONSTRAINT "Review_TopicUpdate_not_null" NOT NULL,
-    "IsTopicDeveloper" boolean CONSTRAINT "Review_TopicDeveloper_not_null" NOT NULL,
-    "IsTopicMonetization" boolean CONSTRAINT "Review_TopicMonetization_not_null" NOT NULL,
-    "IsTopicOther" boolean CONSTRAINT "Review_TopicOther_not_null" NOT NULL
+    "IsVotedUp" boolean,
+    "IsTopicAi" boolean,
+    "IsTopicBugs" boolean,
+    "IsTopicCrashes" boolean,
+    "IsTopicPerformance" boolean,
+    "IsTopicBalance" boolean,
+    "IsTopicCampaign" boolean,
+    "IsTopicBattles" boolean,
+    "IsTopicDlc" boolean,
+    "IsTopicPrice" boolean,
+    "IsTopicContent" boolean,
+    "IsTopicMultiplayer" boolean,
+    "IsTopicUi" boolean,
+    "IsTopicGraphics" boolean,
+    "IsTopicAudio" boolean,
+    "IsTopicMods" boolean,
+    "IsTopicDifficulty" boolean,
+    "IsTopicUpdate" boolean,
+    "IsTopicDeveloper" boolean,
+    "IsTopicMonetization" boolean,
+    "IsTopicOther" boolean
 );
 
 
@@ -270,11 +270,11 @@ GRANT SELECT ON TABLE public."Review" TO grafana_reader;
 ALTER DEFAULT PRIVILEGES FOR ROLE wh3_user IN SCHEMA public GRANT SELECT ON TABLES TO grafana_reader;
 
 
--- Completed on 2026-10-11 18:14:55 EDT
+-- Completed on 2026-10-11 18:41:25 EDT
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict xYWiGbOyNwfWeSwCcJ7t98Htiuvo9SidRFvXSg8z5miYl68pTo0ZswX1nd2YzLu
+\unrestrict GLBpLaUjQhRKwQBMYD6VqD3VxMwJUazeq004YhzCwP28UnxXcLG8fxO2Hp39AIX
 
