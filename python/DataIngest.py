@@ -30,8 +30,32 @@ DATASETS_DIR = ROOT_DIR / "datasets"
 DATABASE_NAME = "wh3_analysis"
 TABLES = ( "Announcement", "Discount", "PlayerActivity", "Review" )
 
-# Reference-only columns are deliberately not part of the PostgreSQL schema.
-EXCLUDED_CSV_COLUMNS = { "Discount": { "SourceUrl" } }
+# Source fields not retained in PostgreSQL. CSV files remain unchanged.
+# This is also where Review metadata is filtered before COPY.
+EXCLUDED_CSV_COLUMNS = {
+    "Discount": { "SourceUrl" },
+    "Review": {
+        "AuthorSteamId",
+        "AuthorNumReviews",
+        "AuthorPlaytimeForever",
+        "AuthorPlaytimeLastTwoWeeks",
+        "AuthorPlaytimeAtReview",
+        "AuthorDeckPlaytimeAtReview",
+        "AuthorLastPlayed",
+        "TimestampCreated",
+        "VotesUp",
+        "VotesFunny",
+        "WeightedVoteScore",
+        "CommentCount",
+        "SteamPurchase",
+        "ReceivedForFree",
+        "WrittenDuringEarlyAccess",
+        "DeveloperResponse",
+        "TimestampDevResponded",
+        "PrimarilySteamDeck",
+        "Refunded"
+    }
+}
 PRIMARY_KEYS = {
     "Announcement": "BuildId",
     "PlayerActivity": "Date",

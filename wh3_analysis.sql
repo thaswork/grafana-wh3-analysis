@@ -116,29 +116,10 @@ BEGIN
             ('PlayerActivity', 'High', 'integer', false, ''),
             ('PlayerActivity', 'Low', 'integer', false, ''),
             ('Review', 'RecommendationId', 'bigint', true, ''),
-            ('Review', 'AuthorSteamId', 'bigint', true, ''),
-            ('Review', 'AuthorNumReviews', 'integer', true, ''),
-            ('Review', 'AuthorPlaytimeForever', 'integer', true, ''),
-            ('Review', 'AuthorPlaytimeLastTwoWeeks', 'integer', true, ''),
-            ('Review', 'AuthorPlaytimeAtReview', 'integer', true, ''),
-            ('Review', 'AuthorDeckPlaytimeAtReview', 'numeric', false, ''),
-            ('Review', 'AuthorLastPlayed', 'timestamp with time zone', true, ''),
             ('Review', 'Language', 'text', true, ''),
             ('Review', 'Review', 'text', false, ''),
-            ('Review', 'TimestampCreated', 'timestamp with time zone', true, ''),
             ('Review', 'TimestampUpdated', 'timestamp with time zone', true, ''),
             ('Review', 'VotedUp', 'boolean', true, ''),
-            ('Review', 'VotesUp', 'integer', true, ''),
-            ('Review', 'VotesFunny', 'integer', true, ''),
-            ('Review', 'WeightedVoteScore', 'double precision', true, ''),
-            ('Review', 'CommentCount', 'integer', true, ''),
-            ('Review', 'SteamPurchase', 'boolean', true, ''),
-            ('Review', 'ReceivedForFree', 'boolean', true, ''),
-            ('Review', 'WrittenDuringEarlyAccess', 'boolean', true, ''),
-            ('Review', 'DeveloperResponse', 'text', false, ''),
-            ('Review', 'TimestampDevResponded', 'timestamp with time zone', false, ''),
-            ('Review', 'PrimarilySteamDeck', 'boolean', true, ''),
-            ('Review', 'Refunded', 'boolean', true, ''),
             ('Review', 'TopicAi', 'boolean', true, ''),
             ('Review', 'TopicBugs', 'boolean', true, ''),
             ('Review', 'TopicCrashes', 'boolean', true, ''),
@@ -315,32 +296,14 @@ CREATE TABLE IF NOT EXISTS public."PlayerActivity" (
     CONSTRAINT "PlayerActivityNonnegative" CHECK (("High" IS NULL OR "High" >= 0) AND ("Low" IS NULL OR "Low" >= 0))
 );
 
--- Review: prepared classification columns match Review.csv.
+-- Review: store the fields used for analysis, excluding unused Steam metadata.
+-- Omitted source fields remain available in Review.csv and ReviewRaw.csv.
 CREATE TABLE IF NOT EXISTS public."Review" (
     "RecommendationId" bigint NOT NULL,
-    "AuthorSteamId" bigint NOT NULL,
-    "AuthorNumReviews" integer NOT NULL,
-    "AuthorPlaytimeForever" integer NOT NULL,
-    "AuthorPlaytimeLastTwoWeeks" integer NOT NULL,
-    "AuthorPlaytimeAtReview" integer NOT NULL,
-    "AuthorDeckPlaytimeAtReview" numeric,
-    "AuthorLastPlayed" timestamp with time zone NOT NULL,
     "Language" text NOT NULL,
     "Review" text,
-    "TimestampCreated" timestamp with time zone NOT NULL,
     "TimestampUpdated" timestamp with time zone NOT NULL,
     "VotedUp" boolean NOT NULL,
-    "VotesUp" integer NOT NULL,
-    "VotesFunny" integer NOT NULL,
-    "WeightedVoteScore" double precision NOT NULL,
-    "CommentCount" integer NOT NULL,
-    "SteamPurchase" boolean NOT NULL,
-    "ReceivedForFree" boolean NOT NULL,
-    "WrittenDuringEarlyAccess" boolean NOT NULL,
-    "DeveloperResponse" text,
-    "TimestampDevResponded" timestamp with time zone,
-    "PrimarilySteamDeck" boolean NOT NULL,
-    "Refunded" boolean NOT NULL,
     "TopicAi" boolean NOT NULL,
     "TopicBugs" boolean NOT NULL,
     "TopicCrashes" boolean NOT NULL,
@@ -379,8 +342,6 @@ CREATE INDEX IF NOT EXISTS "IdxDiscountDateTimeEnd"
     ON public."Discount" ("DateTimeEnd");
 CREATE INDEX IF NOT EXISTS "IdxReviewTimestampUpdated"
     ON public."Review" ("TimestampUpdated");
-CREATE INDEX IF NOT EXISTS "IdxReviewTimestampCreated"
-    ON public."Review" ("TimestampCreated");
 
 -- Access also applies to future project tables created by wh3_user.
 ALTER DEFAULT PRIVILEGES FOR ROLE wh3_user IN SCHEMA public
