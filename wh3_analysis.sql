@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict GLBpLaUjQhRKwQBMYD6VqD3VxMwJUazeq004YhzCwP28UnxXcLG8fxO2Hp39AIX
+\restrict LCFV3DL3BozdeKXpkiwqP8bwIkerjhNNoRcMBUOrRQQmrYR6L1bz9kxeHEISRkc
 
 -- Dumped from database version 18.6 (Debian 18.6-1.pgdg13+2)
 -- Dumped by pg_dump version 18.6 (Ubuntu 18.6-1.pgdg24.04+2)
 
--- Started on 2026-10-11 18:41:25 EDT
+-- Started on 2026-10-11 19:14:52 EDT
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -31,9 +31,9 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public."Build" (
-    "BuildId" integer CONSTRAINT "Announcement_BuildId_not_null" NOT NULL,
-    "Timestamp" timestamp with time zone CONSTRAINT "Announcement_Timestamp_not_null" NOT NULL,
-    "PatchTitle" text CONSTRAINT "Announcement_PatchTitle_not_null" NOT NULL,
+    "BuildId" integer NOT NULL,
+    "Timestamp" timestamp with time zone NOT NULL,
+    "PatchTitle" text NOT NULL,
     "IsPatch" boolean,
     "IsHotfix" boolean,
     "IsFreeContent" boolean,
@@ -118,7 +118,7 @@ ALTER TABLE public."PlayerActivity" OWNER TO wh3_user;
 --
 
 CREATE TABLE public."Review" (
-    "ReviewId" integer CONSTRAINT "Review_RecommendationId_not_null" NOT NULL,
+    "ReviewId" integer NOT NULL,
     "Language" text NOT NULL,
     "Text" text,
     "TimestampUpdated" timestamp with time zone NOT NULL,
@@ -149,7 +149,7 @@ CREATE TABLE public."Review" (
 ALTER TABLE public."Review" OWNER TO wh3_user;
 
 --
--- TOC entry 3303 (class 2606 OID 17396)
+-- TOC entry 3303 (class 2606 OID 17958)
 -- Name: Build Build_pkey; Type: CONSTRAINT; Schema: public; Owner: wh3_user
 --
 
@@ -176,7 +176,7 @@ ALTER TABLE ONLY public."PlayerActivity"
 
 
 --
--- TOC entry 3313 (class 2606 OID 17420)
+-- TOC entry 3313 (class 2606 OID 17953)
 -- Name: Review Review_pkey; Type: CONSTRAINT; Schema: public; Owner: wh3_user
 --
 
@@ -186,10 +186,10 @@ ALTER TABLE ONLY public."Review"
 
 --
 -- TOC entry 3304 (class 1259 OID 16818)
--- Name: IdxAnnouncementTimestamp; Type: INDEX; Schema: public; Owner: wh3_user
+-- Name: IdxBuildTimestamp; Type: INDEX; Schema: public; Owner: wh3_user
 --
 
-CREATE INDEX "IdxAnnouncementTimestamp" ON public."Build" USING btree ("Timestamp");
+CREATE INDEX "IdxBuildTimestamp" ON public."Build" USING btree ("Timestamp");
 
 
 --
@@ -270,11 +270,11 @@ GRANT SELECT ON TABLE public."Review" TO grafana_reader;
 ALTER DEFAULT PRIVILEGES FOR ROLE wh3_user IN SCHEMA public GRANT SELECT ON TABLES TO grafana_reader;
 
 
--- Completed on 2026-10-11 18:41:25 EDT
+-- Completed on 2026-10-11 19:14:52 EDT
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict GLBpLaUjQhRKwQBMYD6VqD3VxMwJUazeq004YhzCwP28UnxXcLG8fxO2Hp39AIX
+\unrestrict LCFV3DL3BozdeKXpkiwqP8bwIkerjhNNoRcMBUOrRQQmrYR6L1bz9kxeHEISRkc
 
