@@ -77,8 +77,7 @@ def save_csv( path: Path, rows: list[ BaseModel ] ) -> int:
 
 async def get_json( session: aiohttp.ClientSession, url: str, params: dict ) -> dict:
 	for attempt in range( 5 ):
-		await asyncio.sleep( 1 )
-
+		
 		async with session.get( url, params = params ) as response:
 			if response.status != 429:
 				response.raise_for_status()
@@ -87,8 +86,8 @@ async def get_json( session: aiohttp.ClientSession, url: str, params: dict ) -> 
 			if attempt == 4:
 				response.raise_for_status()
 
-			retry_after = response.headers.get( "Retry-After", "30" )
-			delay = int( retry_after ) if retry_after.isdigit() else 30
+			retry_after = response.headers.get( "Retry-After", "2" )
+			delay = int( retry_after ) if retry_after.isdigit() else 2
 			print( f"Rate limited. Retrying in {delay}s..." )
 
 		await asyncio.sleep( delay )
