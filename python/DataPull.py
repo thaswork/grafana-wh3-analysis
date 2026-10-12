@@ -121,10 +121,11 @@ def get_player_activity( session: requests.Session ) -> list[ PlayerActivityCSVR
 	total_days = ( last_day - START_DATE ).days + 1
 	rows = []
 
-	for offset in range( total_days ):
-		day = START_DATE + timedelta( days = offset )
-		high, low = daily.get( day, ( None, None ) )
-		rows.append( PlayerActivityCSVRow( Date = day, High = high, Low = low ) )
+	for day in sorted( daily ):
+		high, low = daily[ day ]
+
+		if high is not None and low is not None:
+			rows.append( PlayerActivityCSVRow( Date = day, High = high, Low = low ) )
 
 	return rows
 
