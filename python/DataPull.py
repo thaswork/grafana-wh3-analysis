@@ -1,333 +1,184 @@
-"""Collect API source CSVs for Total War: WARHAMMER III.
-
-Files ending in Raw are intermediate collection outputs, not ingestion-ready
-datasets. ReviewRaw requires separate topic classification, and PlayerActivityRaw
-can require manual quality checks. Prepared CSVs omit the Raw suffix and are
-maintained separately; this script must never overwrite them.
-"""
-
-import argparse
 import csv
-import json
 import os
-import tempfile
-import time
-from datetime import date, datetime, timedelta, timezone
-from pathlib import Path
-
 import requests
+import json
+from datetime import date, datetime, timedelta, timezone
+from dotenv import load_dotenv
+from pathlib import Path
+from pydantic import BaseModel, Field
+from tempfile import TemporaryDirectory
 
+# Consts
+ROOT = Path( __file__ ).resolve().parent.parent
+load_dotenv( ROOT / ".env" )
 
-APP_ID = 1142710
-START_DATE = "2024-01-19"
+APP_ID = int( os.environ[ "APP_ID" ] )
+START_DATE = date.fromisoformat( os.environ[ "START_DATE" ] )
+GAMES_POPULARITY_API_KEY = os.environ[ "GAMES_POPULARITY_API_KEY" ]
 
-STEAM_REVIEWS_URL = "https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/"
-PLAYER_ACTIVITY_URL = f"https://games-popularity.com/swagger/api/game/players/{APP_ID}"
+STEAM_URL = "https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/"
+PLAYERS_URL = f"https://games-popularity.com/swagger/api/game/players/{APP_ID}"
 
-DATASETS_DIR = Path( __file__ ).resolve().parent.parent / "datasets"
-MAX_RETRIES = 5
-REQUEST_TIMEOUT = 30
+# DTOs
+class ReviewCSVRow( BaseModel ):
+	ReviewId: int = Field( validation_alias = "recommendationid" )
+	Language: str = Field( validation_alias = "language" )
+	Text: str | None = Field( None, validation_alias = "review" )
+	TimestampUpdated: datetime = Field( validation_alias = "timestamp_updated" )
+	IsVotedUp: bool | None = Field( None, validation_alias = "voted_up" )
+	# Blank topics to be classified downstream
+	IsTopicAi: int = 0
+	IsTopicBugs: int = 0
+	IsTopicCrashes: int = 0
+	IsTopicPerformance: int = 0
+	IsTopicBalance: int = 0
+	IsTopicCampaign: int = 0
+	IsTopicBattles: int = 0
+	IsTopicDlc: int = 0
+	IsTopicPrice: int = 0
+	IsTopicContent: int = 0
+	IsTopicMultiplayer: int = 0
+	IsTopicUi: int = 0
+	IsTopicGraphics: int = 0
+	IsTopicAudio: int = 0
+	IsTopicMods: int = 0
+	IsTopicDifficulty: int = 0
+	IsTopicUpdate: int = 0
+	IsTopicDeveloper: int = 0
+	IsTopicMonetization: int = 0
+	IsTopicOther: int = 0
 
-REVIEW_FIELDS = {
-	"RecommendationId": ( "recommendationid", ),
-	"AuthorSteamId": ( "author", "steamid" ),
-	"AuthorNumReviews": ( "author", "num_reviews" ),
-	"AuthorPlaytimeForever": ( "author", "playtime_forever" ),
-	"AuthorPlaytimeLastTwoWeeks": ( "author", "playtime_last_two_weeks" ),
-	"AuthorPlaytimeAtReview": ( "author", "playtime_at_review" ),
-	"AuthorDeckPlaytimeAtReview": ( "author", "deck_playtime_at_review" ),
-	"AuthorLastPlayed": ( "author", "last_played" ),
-	"Language": ( "language", ),
-	"Review": ( "review", ),
-	"TimestampCreated": ( "timestamp_created", ),
-	"TimestampUpdated": ( "timestamp_updated", ),
-	"VotedUp": ( "voted_up", ),
-	"VotesUp": ( "votes_up", ),
-	"VotesFunny": ( "votes_funny", ),
-	"WeightedVoteScore": ( "weighted_vote_score", ),
-	"CommentCount": ( "comment_count", ),
-	"SteamPurchase": ( "steam_purchase", ),
-	"ReceivedForFree": ( "received_for_free", ),
-	"WrittenDuringEarlyAccess": ( "written_during_early_access", ),
-	"DeveloperResponse": ( "developer_response", ),
-	"TimestampDevResponded": ( "timestamp_dev_responded", ),
-	"PrimarilySteamDeck": ( "primarily_steam_deck", ),
-	"Refunded": ( "refunded", )
-}
+class PlayerActivityCSVRow( BaseModel ):
+	Date: date
+	High: int | None = None
+	Low: int | None = None
 
+# Functions
+def save_csv( path: Path, rows: list[ BaseModel ] ) -> int:
+	if not rows:
+		raise ValueError( f"No rows collected for {path.name}; existing CSV retained." )
 
-def get_json( session, url, params, source ):
-	"""Fetch a page, retrying rate limits and temporary failures."""
-	for attempt in range( MAX_RETRIES ):
-		try:
-			response = session.get( url, params = params, timeout = REQUEST_TIMEOUT )
-		except requests.RequestException:
-			if attempt == MAX_RETRIES - 1:
-				raise RuntimeError( f"{source}: network request failed after {MAX_RETRIES} attempts." ) from None
-		else:
-			if response.status_code == 429 or 500 <= response.status_code < 600:
-				if attempt == MAX_RETRIES - 1:
-					raise RuntimeError( f"{source}: HTTP {response.status_code} after {MAX_RETRIES} attempts." )
+	path.parent.mkdir( parents = True, exist_ok = True )
 
-				if response.status_code == 429:
-					retry_after = response.headers.get( "Retry-After", "" )
-					wait_time = int( retry_after ) if retry_after.isdigit() else 10
-				else:
-					wait_time = min( 30, 2 ** ( attempt + 1 ) )
+	with TemporaryDirectory( dir = path.parent ) as folder:
+		temporary = Path( folder ) / path.name
 
-				print( f"{source}: HTTP {response.status_code}; retrying in {wait_time} seconds..." )
-				time.sleep( wait_time )
-				continue
-
-			if not response.ok:
-				raise RuntimeError( f"{source}: HTTP {response.status_code}." )
-
-			try:
-				return response.json()
-			except ValueError:
-				raise RuntimeError( f"{source}: API returned invalid JSON." ) from None
-
-		wait_time = min( 30, 2 ** ( attempt + 1 ) )
-		print( f"{source}: network error; retrying in {wait_time} seconds..." )
-		time.sleep( wait_time )
-
-
-def save_csv( output_file, fieldnames, write_rows ):
-	"""Write a temporary CSV and replace the destination only on success."""
-	output_file.parent.mkdir( parents = True, exist_ok = True )
-	temp_path = None
-
-	try:
-		with tempfile.NamedTemporaryFile(
-			mode = "w",
-			newline = "",
-			encoding = "utf-8",
-			dir = output_file.parent,
-			prefix = output_file.stem + "_",
-			suffix = ".tmp",
-			delete = False
-		) as file:
-			temp_path = Path( file.name )
-			writer = csv.DictWriter( file, fieldnames = fieldnames )
+		with temporary.open( "w", newline = "", encoding = "utf-8" ) as file:
+			writer = csv.DictWriter( file, fieldnames = type( rows[ 0 ] ).model_fields )
 			writer.writeheader()
-			row_count = write_rows( writer )
 
-		temp_path.replace( output_file )
-		return row_count
-	finally:
-		if temp_path is not None:
-			temp_path.unlink( missing_ok = True )
+			for row in rows:
+				writer.writerow( row.model_dump( mode = "json" ) )
 
+		temporary.replace( path )
 
-def flatten_review( review ):
-	row = {}
-	for column, path in REVIEW_FIELDS.items():
-		value = review
-		for key in path:
-			value = value.get( key ) if isinstance( value, dict ) else None
-		row[ column ] = "" if value is None else value
-	return row
+	return len( rows )
 
+def get_json( session: requests.Session, url: str, params: dict ) -> dict:
+	response = session.get( url, params = params, timeout = 30 )
+	response.raise_for_status()
 
-def collect_daily_observations( session, api_key ):
-	"""Aggregate intraday player observations into one daily record per date."""
-	start = date.fromisoformat( START_DATE )
-	daily = {}
+	return response.json()
+
+def get_player_activity( session: requests.Session ) -> list[ PlayerActivityCSVRow ]:
+	daily: dict[ date, tuple[ int, int ] ] = {}
 	cursor = None
-	seen_cursors = set()
 
 	while True:
-		params = { "apiKey": api_key }
-		if cursor is not None:
+		params = { "apiKey": GAMES_POPULARITY_API_KEY }
+
+		if cursor:
 			params[ "cursor" ] = cursor
 
-		data = get_json( session, PLAYER_ACTIVITY_URL, params, "Player activity" )
+		data = get_json( session, PLAYERS_URL, params )
 		history = data.get( "history", [] )
-		if not isinstance( history, list ):
-			raise RuntimeError( "Player activity: unexpected history format." )
+
 		if not history:
 			break
 
-		for point in history:
-			point_date = date.fromisoformat( point[ "added" ][ :10 ] )
-			if point_date < start:
-				continue
+		for item in history:
+			day = date.fromisoformat( item[ "added" ][ :10 ] )
+			players = item[ "players" ]
 
-			players = point[ "players" ]
-			if isinstance( players, bool ) or not isinstance( players, int ) or players < 0:
-				raise RuntimeError( f"Player activity: invalid player count on {point_date}." )
+			if day >= START_DATE:
+				high, low = daily.get( day, ( players, players ) )
+				daily[ day ] = ( max( high, players ), min( low, players ) )
 
-			if point_date not in daily:
-				daily[ point_date ] = { "Date": point_date.isoformat(), "High": players, "Low": players }
-			else:
-				daily[ point_date ][ "High" ] = max( daily[ point_date ][ "High" ], players )
-				daily[ point_date ][ "Low" ] = min( daily[ point_date ][ "Low" ], players )
-
-		# Games Popularity provides history in newest-to-oldest order.
-		if date.fromisoformat( history[ -1 ][ "added" ][ :10 ] ) < start:
+		if day < START_DATE:
 			break
 
 		next_cursor = data.get( "nextCursor" )
-		if not next_cursor:
-			break
-		if next_cursor == cursor or next_cursor in seen_cursors:
-			raise RuntimeError( "Player activity: pagination cursor repeated." )
 
-		seen_cursors.add( next_cursor )
+		if not next_cursor or next_cursor == cursor:
+			break
+
 		cursor = next_cursor
 
 	if not daily:
-		raise RuntimeError( "Player activity: no observations collected; output not replaced." )
+		raise ValueError( "No player activity returned; existing CSV retained." )
 
-	return list( daily.values() )
+	last_day = max( daily )
+	total_days = ( last_day - START_DATE ).days + 1
+	rows = []
 
+	for offset in range( total_days ):
+		day = START_DATE + timedelta( days = offset )
+		high, low = daily.get( day, ( None, None ) )
+		rows.append( PlayerActivityCSVRow( Date = day, High = high, Low = low ) )
 
-def validate_daily_rows( rows ):
-	"""Mark duplicated daily records invalid, even when their counts agree."""
-	by_date = {}
-	invalid_dates = set()
+	return rows
 
-	for row in rows:
-		day = date.fromisoformat( row[ "Date" ] )
-		if day in by_date:
-			invalid_dates.add( day )
-		else:
-			by_date[ day ] = dict( row )
-
-	for day in invalid_dates:
-		by_date[ day ][ "High" ] = ""
-		by_date[ day ][ "Low" ] = ""
-
-	return by_date, invalid_dates
-
-
-def complete_calendar( rows ):
-	"""Fill missing dates with blank counts without fabricating observations."""
-	by_date, invalid_dates = validate_daily_rows( rows )
-	start = date.fromisoformat( START_DATE )
-	last = max( by_date )
-	complete = []
-	missing_dates = []
-
-	day = start
-	while day <= last:
-		if day in by_date:
-			complete.append( by_date[ day ] )
-		else:
-			complete.append( { "Date": day.isoformat(), "High": "", "Low": "" } )
-			missing_dates.append( day )
-		day += timedelta( days = 1 )
-
-	return complete, missing_dates, invalid_dates
-
-
-def fetch_player_activity( session, api_key ):
-	"""Collect player observations and produce a continuous daily CSV."""
-	output_file = DATASETS_DIR / "PlayerActivityRaw.csv"
-	print( f"Fetching player activity starting {START_DATE}..." )
-	rows = collect_daily_observations( session, api_key )
-	complete, missing_dates, invalid_dates = complete_calendar( rows )
-
-	def write_rows( writer ):
-		writer.writerows( complete )
-		return len( complete )
-
-	count = save_csv( output_file, [ "Date", "High", "Low" ], write_rows )
-	print( f"Saved {count:,} days to {output_file}" )
-	print( f"Missing API dates filled with blank counts: {len( missing_dates ):,}" )
-	print( f"Duplicate daily dates marked invalid: {len( invalid_dates ):,}" )
-	if invalid_dates:
-		print( "Invalid dates: " + ", ".join( d.isoformat() for d in sorted( invalid_dates ) ) )
-
-
-def fetch_reviews( session ):
-	"""Fetch unique Steam reviews and write one CSV row per recommendation."""
-	output_file = DATASETS_DIR / "ReviewRaw.csv"
-	start_timestamp = int(
-		datetime.strptime( START_DATE, "%Y-%m-%d" ).replace( tzinfo = timezone.utc ).timestamp()
-	)
-	end_timestamp = int( datetime.now( timezone.utc ).timestamp() )
-
+def get_reviews( session: requests.Session ) -> list[ ReviewCSVRow ]:
 	query = {
 		"appid": APP_ID,
 		"filter": 1,
 		"languages": [ "all" ],
-		"review_type": 0,
 		"purchase_type": 1,
 		"num_per_page": 100,
 		"filter_offtopic_activity": False,
-		"date_range_start": start_timestamp,
-		"date_range_end": end_timestamp,
 		"cursor": "*"
 	}
 
-	print( f"Fetching Steam reviews starting {START_DATE}..." )
-	seen_reviews = set()
-	seen_cursors = { "*" }
+	seen = set()
+	rows = []
 
-	def write_rows( writer ):
-		total = 0
-		while True:
-			data = get_json(
-				session,
-				STEAM_REVIEWS_URL,
-				{ "input_json": json.dumps( query ) },
-				"Steam reviews"
-			)
-			if "response" not in data:
-				raise RuntimeError( "Steam reviews: unexpected API response format." )
+	while True:
+		data = get_json( session, STEAM_URL, { "input_json": json.dumps( query ) } )[ "response" ]
+		reviews = data.get( "reviews", [] )
 
-			response = data[ "response" ]
-			reviews = response.get( "reviews", [] )
-			if not reviews:
-				break
+		if not reviews:
+			break
 
-			new_reviews = 0
-			for review in reviews:
-				recommendation_id = review.get( "recommendationid" )
-				if not recommendation_id or recommendation_id in seen_reviews:
-					continue
+		for item in reviews:
+			if datetime.fromtimestamp( item[ "timestamp_created" ], timezone.utc ).date() < START_DATE:
+				return rows
 
-				seen_reviews.add( recommendation_id )
-				writer.writerow( flatten_review( review ) )
-				new_reviews += 1
-				total += 1
+			review = ReviewCSVRow.model_validate( item )
 
-			print( f"Collected {total:,} Steam reviews...", end = "\r", flush = True )
-			if not new_reviews:
-				break
+			if review.ReviewId not in seen:
+				seen.add( review.ReviewId )
+				rows.append( review )
 
-			next_cursor = response.get( "cursor" )
-			if not next_cursor:
-				break
-			if next_cursor in seen_cursors:
-				break
-			seen_cursors.add( next_cursor )
-			query[ "cursor" ] = next_cursor
+		print( f"Steam reviews: {len( seen ):,}", end = "\r", flush = True )
+		next_cursor = data.get( "cursor" )
 
-		return total
+		if not next_cursor or next_cursor == query[ "cursor" ]:
+			break
 
-	count = save_csv( output_file, list( REVIEW_FIELDS ), write_rows )
-	print( f"\nSaved {count:,} reviews to {output_file}" )
+		query[ "cursor" ] = next_cursor
 
+	return rows
 
-def main():
-	parser = argparse.ArgumentParser( description = "Collect raw player activity and Steam review CSVs for later preparation." )
-	parser.add_argument(
-		"api_key",
-		nargs = "?",
-		help = "Games Popularity API key (or set GAMES_POPULARITY_API_KEY)."
-	)
-	args = parser.parse_args()
-
-	api_key = args.api_key or os.environ.get( "GAMES_POPULARITY_API_KEY" )
-	if not api_key:
-		parser.error( "Games Popularity API key required as an argument or GAMES_POPULARITY_API_KEY." )
-
+def main() -> None:
 	with requests.Session() as session:
-		fetch_player_activity( session, api_key )
-		fetch_reviews( session )
+		activity = get_player_activity( session )
+		count = save_csv( ROOT / "PlayerActivityRaw.csv", activity )
+		missing = sum( row.High is None for row in activity )
+		print( f"Player activity: {count:,} days ({missing:,} missing)." )
 
+		reviews = get_reviews( session )
+		count = save_csv( ROOT / "ReviewRaw.csv", reviews )
+		print( f"\nSteam reviews saved: {count:,}." )
 
 if __name__ == "__main__":
 	main()
