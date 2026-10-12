@@ -1,8 +1,9 @@
+import asyncio
+import aiohttp
 import csv
 import os
-import requests
 import json
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timezone
 from dotenv import load_dotenv
 from pathlib import Path
 from pydantic import BaseModel, Field
@@ -74,13 +75,27 @@ def save_csv( path: Path, rows: list[ BaseModel ] ) -> int:
 
 	return len( rows )
 
-def get_json( session: requests.Session, url: str, params: dict ) -> dict:
-	response = session.get( url, params = params, timeout = 30 )
-	response.raise_for_status()
+async def get_json( session: aiohttp.ClientSession, url: str, params: dict ) -> dict:
+	for attempt in range( 5 ):
+		await asyncio.sleep( 1 )
 
-	return response.json()
+		async with session.get( url, params = params ) as response:
+			if response.status != 429:
+				response.raise_for_status()
+				return await response.json()
 
-def get_player_activity( session: requests.Session ) -> list[ PlayerActivityCSVRow ]:
+			if attempt == 4:
+				response.raise_for_status()
+
+			retry_after = response.headers.get( "Retry-After", "30" )
+			delay = int( retry_after ) if retry_after.isdigit() else 30
+			print( f"Rate limited. Retrying in {delay}s..." )
+
+		await asyncio.sleep( delay )
+
+	raise RuntimeError( "API rate limit exceeded." )
+
+async def get_player_activity( session: aiohttp.ClientSession ) -> list[ PlayerActivityCSVRow ]:
 	daily: dict[ date, tuple[ int, int ] ] = {}
 	cursor = None
 
@@ -90,7 +105,7 @@ def get_player_activity( session: requests.Session ) -> list[ PlayerActivityCSVR
 		if cursor:
 			params[ "cursor" ] = cursor
 
-		data = get_json( session, PLAYERS_URL, params )
+		data = await get_json( session, PLAYERS_URL, params )
 		history = data.get( "history", [] )
 
 		if not history:
@@ -98,7 +113,10 @@ def get_player_activity( session: requests.Session ) -> list[ PlayerActivityCSVR
 
 		for item in history:
 			day = date.fromisoformat( item[ "added" ][ :10 ] )
-			players = item[ "players" ]
+			players = item.get( "players" )
+
+			if players is None or players == "":
+				continue
 
 			if day >= START_DATE:
 				high, low = daily.get( day, ( players, players ) )
@@ -117,19 +135,19 @@ def get_player_activity( session: requests.Session ) -> list[ PlayerActivityCSVR
 	if not daily:
 		raise ValueError( "No player activity returned; existing CSV retained." )
 
-	last_day = max( daily )
-	total_days = ( last_day - START_DATE ).days + 1
 	rows = []
 
 	for day in sorted( daily ):
 		high, low = daily[ day ]
 
-		if high is not None and low is not None:
-			rows.append( PlayerActivityCSVRow( Date = day, High = high, Low = low ) )
+		if high is None or low is None:
+			continue
+
+		rows.append( PlayerActivityCSVRow( Date = day, High = high, Low = low ) )
 
 	return rows
 
-def get_reviews( session: requests.Session ) -> list[ ReviewCSVRow ]:
+async def get_reviews( session: aiohttp.ClientSession ) -> list[ ReviewCSVRow ]:
 	query = {
 		"appid": APP_ID,
 		"filter": 1,
@@ -144,7 +162,7 @@ def get_reviews( session: requests.Session ) -> list[ ReviewCSVRow ]:
 	rows = []
 
 	while True:
-		data = get_json( session, STEAM_URL, { "input_json": json.dumps( query ) } )[ "response" ]
+		data = ( await get_json( session, STEAM_URL, { "input_json": json.dumps( query ) } ) )[ "response" ]
 		reviews = data.get( "reviews", [] )
 
 		if not reviews:
@@ -170,16 +188,15 @@ def get_reviews( session: requests.Session ) -> list[ ReviewCSVRow ]:
 
 	return rows
 
-def main() -> None:
-	with requests.Session() as session:
-		activity = get_player_activity( session )
+async def main() -> None:
+	async with aiohttp.ClientSession( timeout = aiohttp.ClientTimeout( total = 30 ) ) as session:
+		activity = await get_player_activity( session )
 		count = save_csv( ROOT / "PlayerActivityRaw.csv", activity )
-		missing = sum( row.High is None for row in activity )
-		print( f"Player activity: {count:,} days ({missing:,} missing)." )
+		print( f"Player activity: {count:,} days." )
 
-		reviews = get_reviews( session )
+		reviews = await get_reviews( session )
 		count = save_csv( ROOT / "ReviewRaw.csv", reviews )
 		print( f"\nSteam reviews saved: {count:,}." )
 
 if __name__ == "__main__":
-	main()
+	asyncio.run( main() )
