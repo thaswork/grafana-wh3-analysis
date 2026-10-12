@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict DjzeLpj6Ou25bZyY8frJkB9PFVJmcQcrjiL8dcEkdbEMc3y2ExCoHEhVUOkEz8E
+\restrict PZzqe5IgdhiIFcHud3qsTsB7dGncdftGwy7M3iqlshcQNe7a8Ow8a7utTCPHCQd
 
 -- Dumped from database version 18.6 (Debian 18.6-1.pgdg13+2)
 -- Dumped by pg_dump version 18.6 (Ubuntu 18.6-1.pgdg24.04+2)
 
--- Started on 2026-10-11 23:07:32 EDT
+-- Started on 2026-10-11 23:14:45 EDT
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -89,8 +89,8 @@ ALTER TABLE public."Discount" OWNER TO wh3_user;
 
 CREATE TABLE public."PlayerActivity" (
     "Date" date NOT NULL,
-    "High" integer,
-    "Low" integer
+    "High" integer NOT NULL,
+    "Low" integer NOT NULL
 );
 
 
@@ -104,7 +104,7 @@ ALTER TABLE public."PlayerActivity" OWNER TO wh3_user;
 CREATE TABLE public."Review" (
     "ReviewId" integer NOT NULL,
     "Language" text NOT NULL,
-    "Text" text,
+    "Text" text NOT NULL,
     "TimestampUpdated" timestamp with time zone NOT NULL,
     "IsVotedUp" boolean NOT NULL,
     "IsTopicAi" boolean NOT NULL,
@@ -254,11 +254,11 @@ GRANT SELECT ON TABLE public."Review" TO grafana_reader;
 ALTER DEFAULT PRIVILEGES FOR ROLE wh3_user IN SCHEMA public GRANT SELECT ON TABLES TO grafana_reader;
 
 
--- Completed on 2026-10-11 23:07:32 EDT
+-- Completed on 2026-10-11 23:14:45 EDT
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict DjzeLpj6Ou25bZyY8frJkB9PFVJmcQcrjiL8dcEkdbEMc3y2ExCoHEhVUOkEz8E
+\unrestrict PZzqe5IgdhiIFcHud3qsTsB7dGncdftGwy7M3iqlshcQNe7a8Ow8a7utTCPHCQd
 
