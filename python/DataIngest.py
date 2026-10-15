@@ -4,14 +4,14 @@ from dotenv import load_dotenv
 from pathlib import Path
 from psycopg import sql
 
-# Consts
+# Constants
 ROOT = Path( __file__ ).resolve().parent.parent
 load_dotenv( ROOT / ".env" )
 
 DATASETS = ROOT / "datasets"
 TABLES = ( "Build", "Discount", "PlayerActivity", "Review" )
 
-# Functions
+# Functions delete old and load new data
 def delete_rows( cursor: psycopg.Cursor ) -> None:
 	for table in TABLES:
 		cursor.execute( sql.SQL( "DELETE FROM {}" ).format( sql.Identifier( "public", table ) ) )
