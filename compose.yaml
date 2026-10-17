@@ -22,6 +22,8 @@ services:
     image: grafana/grafana:13.2.3
     container_name: wh3-grafana
     restart: unless-stopped
+    environment:
+      GF_DATE_FORMATS_INTERVAL_MONTH: "MMM YYYY"
     ports:
       - "127.0.0.1:3000:3000"
     volumes:
