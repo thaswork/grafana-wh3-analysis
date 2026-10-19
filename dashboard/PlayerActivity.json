@@ -3,7 +3,7 @@
   "kind": "Dashboard",
   "metadata": {
     "name": "ad6twdl",
-    "generation": 36,
+    "generation": 44,
     "creationTimestamp": "2026-10-07T16:24:34Z",
     "labels": {},
     "annotations": {}
@@ -139,7 +139,7 @@
         "spec": {
           "id": 1,
           "title": "Player Activity Across Time",
-          "description": "Player high/low, 7/30 day average daily midpoint.",
+          "description": "",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -280,7 +280,7 @@
                     },
                     "insertNulls": false,
                     "lineInterpolation": "linear",
-                    "lineWidth": 1,
+                    "lineWidth": 2,
                     "pointSize": 5,
                     "scaleDistribution": {
                       "type": "linear"
@@ -312,7 +312,7 @@
                       {
                         "id": "color",
                         "value": {
-                          "fixedColor": "#02428e",
+                          "fixedColor": "semi-dark-blue",
                           "mode": "fixed"
                         }
                       }
@@ -452,7 +452,7 @@
         "kind": "Panel",
         "spec": {
           "id": 2,
-          "title": "Average Daily Midpoint",
+          "title": "",
           "description": "",
           "links": [],
           "data": {
@@ -512,7 +512,7 @@
               "options": {
                 "colorMode": "none",
                 "graphMode": "area",
-                "justifyMode": "auto",
+                "justifyMode": "center",
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
@@ -523,11 +523,12 @@
                   "values": false
                 },
                 "showPercentChange": false,
-                "textMode": "auto",
-                "wideLayout": true
+                "textMode": "value_and_name",
+                "wideLayout": false
               },
               "fieldConfig": {
                 "defaults": {
+                  "displayName": "Average Daily Midpoint",
                   "unit": "locale",
                   "decimals": 0,
                   "thresholds": {
@@ -557,7 +558,7 @@
         "kind": "Panel",
         "spec": {
           "id": 3,
-          "title": "Daily Player STD",
+          "title": "",
           "description": "",
           "links": [],
           "data": {
@@ -617,7 +618,7 @@
               "options": {
                 "colorMode": "none",
                 "graphMode": "area",
-                "justifyMode": "auto",
+                "justifyMode": "center",
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
@@ -628,11 +629,12 @@
                   "values": false
                 },
                 "showPercentChange": false,
-                "textMode": "auto",
-                "wideLayout": true
+                "textMode": "value_and_name",
+                "wideLayout": false
               },
               "fieldConfig": {
                 "defaults": {
+                  "displayName": "Daily Player STD",
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [
@@ -660,7 +662,7 @@
         "kind": "Panel",
         "spec": {
           "id": 4,
-          "title": "Average Intrday Player STD",
+          "title": "",
           "description": "",
           "links": [],
           "data": {
@@ -720,7 +722,7 @@
               "options": {
                 "colorMode": "none",
                 "graphMode": "area",
-                "justifyMode": "auto",
+                "justifyMode": "center",
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
@@ -731,11 +733,12 @@
                   "values": false
                 },
                 "showPercentChange": false,
-                "textMode": "auto",
-                "wideLayout": true
+                "textMode": "value_and_name",
+                "wideLayout": false
               },
               "fieldConfig": {
                 "defaults": {
+                  "displayName": "Average Intrday Player STD",
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [
@@ -770,7 +773,7 @@
               "x": 0,
               "y": 0,
               "width": 8,
-              "height": 7,
+              "height": 3,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-3"
@@ -783,7 +786,7 @@
               "x": 8,
               "y": 0,
               "width": 8,
-              "height": 7,
+              "height": 3,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-2"
@@ -796,7 +799,7 @@
               "x": 16,
               "y": 0,
               "width": 8,
-              "height": 7,
+              "height": 3,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-4"
@@ -807,9 +810,9 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 7,
+              "y": 3,
               "width": 24,
-              "height": 15,
+              "height": 16,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-1"

@@ -3,7 +3,7 @@
   "kind": "Dashboard",
   "metadata": {
     "name": "adln5fk",
-    "generation": 32,
+    "generation": 54,
     "creationTimestamp": "2026-10-16T02:38:47Z",
     "labels": {},
     "annotations": {}
@@ -41,7 +41,7 @@
               "editorMode": "code",
               "format": "table",
               "rawQuery": true,
-              "rawSql": "SELECT\n    \"Timestamp\" AS \"time\",\n    \"PatchTitle\" AS \"text\",\n    CONCAT_WS (\n        ', ',\n        CASE WHEN \"IsPatch\" THEN 'Patch' END,\n        CASE WHEN \"IsHotfix\" THEN 'Hotfix' END,\n        CASE WHEN \"IsFreeContent\" THEN 'Free Content' END,\n        CASE WHEN \"IsPaidContent\" THEN 'Paid Content' END\n    ) AS \"tags\"\nFROM \"Build\"\nWHERE $__timeFilter(\"Timestamp\")\n    AND (\n        \"IsPatch\"\n        OR \"IsHotfix\"\n        OR \"IsFreeContent\"\n        OR \"IsPaidContent\"\n    )\n    AND (\n        ( 'IsTopicAi' IN ( ${Topic:sqlstring} ) AND \"IsTopicAi\" )\n        OR ( 'IsTopicBugs' IN ( ${Topic:sqlstring} ) AND \"IsTopicBugs\" )\n        OR ( 'IsTopicCrashes' IN ( ${Topic:sqlstring} ) AND \"IsTopicCrashes\" )\n        OR ( 'IsTopicPerformance' IN ( ${Topic:sqlstring} ) AND \"IsTopicPerformance\" )\n        OR ( 'IsTopicBalance' IN ( ${Topic:sqlstring} ) AND \"IsTopicBalance\" )\n        OR ( 'IsTopicCampaign' IN ( ${Topic:sqlstring} ) AND \"IsTopicCampaign\" )\n        OR ( 'IsTopicBattles' IN ( ${Topic:sqlstring} ) AND \"IsTopicBattles\" )\n        OR ( 'IsTopicDlc' IN ( ${Topic:sqlstring} ) AND \"IsTopicDlc\" )\n        OR ( 'IsTopicPrice' IN ( ${Topic:sqlstring} ) AND \"IsTopicPrice\" )\n        OR ( 'IsTopicContent' IN ( ${Topic:sqlstring} ) AND \"IsTopicContent\" )\n        OR ( 'IsTopicMultiplayer' IN ( ${Topic:sqlstring} ) AND \"IsTopicMultiplayer\" )\n        OR ( 'IsTopicUi' IN ( ${Topic:sqlstring} ) AND \"IsTopicUi\" )\n        OR ( 'IsTopicGraphics' IN ( ${Topic:sqlstring} ) AND \"IsTopicGraphics\" )\n        OR ( 'IsTopicAudio' IN ( ${Topic:sqlstring} ) AND \"IsTopicAudio\" )\n        OR ( 'IsTopicMods' IN ( ${Topic:sqlstring} ) AND \"IsTopicMods\" )\n        OR ( 'IsTopicDifficulty' IN ( ${Topic:sqlstring} ) AND \"IsTopicDifficulty\" )\n        OR ( 'IsTopicUpdate' IN ( ${Topic:sqlstring} ) AND \"IsTopicUpdate\" )\n        OR ( 'IsTopicDeveloper' IN ( ${Topic:sqlstring} ) AND \"IsTopicDeveloper\" )\n        OR ( 'IsTopicMonetization' IN ( ${Topic:sqlstring} ) AND \"IsTopicMonetization\" )\n    )\nORDER BY \"Timestamp\";",
+              "rawSql": "SELECT\n    \"Timestamp\" AS \"time\",\n    \"PatchTitle\" AS \"text\",\n    CONCAT_WS (\n        ', ',\n        CASE WHEN \"IsPatch\" THEN 'Patch' END,\n        CASE WHEN \"IsHotfix\" THEN 'Hotfix' END,\n        CASE WHEN \"IsFreeContent\" THEN 'Free Content' END,\n        CASE WHEN \"IsPaidContent\" THEN 'Paid Content' END\n    ) AS \"tags\"\nFROM \"Build\"\nWHERE $__timeFilter(\"Timestamp\")\n    AND (\n        \"IsPatch\"\n        OR \"IsHotfix\"\n        OR \"IsFreeContent\"\n        OR \"IsPaidContent\"\n    )\n    AND (\n        '${Topic:raw}' = '__all'\n        OR (\n            'IsTopicAi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAi\"\n        )\n        OR (\n            'IsTopicBugs' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBugs\"\n        )\n        OR (\n            'IsTopicCrashes' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCrashes\"\n        )\n        OR (\n            'IsTopicPerformance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPerformance\"\n        )\n        OR (\n            'IsTopicBalance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBalance\"\n        )\n        OR (\n            'IsTopicCampaign' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCampaign\"\n        )\n        OR (\n            'IsTopicBattles' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBattles\"\n        )\n        OR (\n            'IsTopicDlc' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDlc\"\n        )\n        OR (\n            'IsTopicContent' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicContent\"\n        )\n        OR (\n            'IsTopicMultiplayer' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMultiplayer\"\n        )\n        OR (\n            'IsTopicUi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUi\"\n        )\n        OR (\n            'IsTopicGraphics' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicGraphics\"\n        )\n        OR (\n            'IsTopicAudio' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAudio\"\n        )\n        OR (\n            'IsTopicMods' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMods\"\n        )\n        OR (\n            'IsTopicDifficulty' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDifficulty\"\n        )\n        OR (\n            'IsTopicUpdate' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUpdate\"\n        )\n        OR (\n            'IsTopicDeveloper' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDeveloper\"\n        )\n        OR (\n            'IsTopicMonetization' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMonetization\"\n        )\n        OR (\n            'IsTopicPrice' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPrice\"\n        )\n    )\nORDER BY \"Timestamp\";",
               "refId": "Anno",
               "sql": {
                 "columns": [
@@ -142,7 +142,7 @@
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "WITH \"FilteredReview\" AS (\n    SELECT\n        ( \"TimestampUpdated\" AT TIME ZONE 'UTC' )::date AS \"Date\",\n        \"IsVotedUp\"\n    FROM \"Review\"\n    WHERE\n        ( 'IsTopicAi' IN ( ${Topic:sqlstring} ) AND \"IsTopicAi\" )\n        OR ( 'IsTopicBugs' IN ( ${Topic:sqlstring} ) AND \"IsTopicBugs\" )\n        OR ( 'IsTopicCrashes' IN ( ${Topic:sqlstring} ) AND \"IsTopicCrashes\" )\n        OR ( 'IsTopicPerformance' IN ( ${Topic:sqlstring} ) AND \"IsTopicPerformance\" )\n        OR ( 'IsTopicBalance' IN ( ${Topic:sqlstring} ) AND \"IsTopicBalance\" )\n        OR ( 'IsTopicCampaign' IN ( ${Topic:sqlstring} ) AND \"IsTopicCampaign\" )\n        OR ( 'IsTopicBattles' IN ( ${Topic:sqlstring} ) AND \"IsTopicBattles\" )\n        OR ( 'IsTopicDlc' IN ( ${Topic:sqlstring} ) AND \"IsTopicDlc\" )\n        OR ( 'IsTopicPrice' IN ( ${Topic:sqlstring} ) AND \"IsTopicPrice\" )\n        OR ( 'IsTopicContent' IN ( ${Topic:sqlstring} ) AND \"IsTopicContent\" )\n        OR ( 'IsTopicMultiplayer' IN ( ${Topic:sqlstring} ) AND \"IsTopicMultiplayer\" )\n        OR ( 'IsTopicUi' IN ( ${Topic:sqlstring} ) AND \"IsTopicUi\" )\n        OR ( 'IsTopicGraphics' IN ( ${Topic:sqlstring} ) AND \"IsTopicGraphics\" )\n        OR ( 'IsTopicAudio' IN ( ${Topic:sqlstring} ) AND \"IsTopicAudio\" )\n        OR ( 'IsTopicMods' IN ( ${Topic:sqlstring} ) AND \"IsTopicMods\" )\n        OR ( 'IsTopicDifficulty' IN ( ${Topic:sqlstring} ) AND \"IsTopicDifficulty\" )\n        OR ( 'IsTopicUpdate' IN ( ${Topic:sqlstring} ) AND \"IsTopicUpdate\" )\n        OR ( 'IsTopicDeveloper' IN ( ${Topic:sqlstring} ) AND \"IsTopicDeveloper\" )\n        OR ( 'IsTopicMonetization' IN ( ${Topic:sqlstring} ) AND \"IsTopicMonetization\" )\n),\n\"DailyReview\" AS (\n    SELECT\n        \"Date\",\n        COUNT ( * ) AS \"DailyReviewCount\",\n        AVG (\n            CASE\n                WHEN \"IsVotedUp\" THEN 1.0\n                ELSE 0.0\n            END\n        ) * 100.0 AS \"DailyPositiveReviewPercentage\"\n    FROM \"FilteredReview\"\n    GROUP BY \"Date\"\n),\n\"DailyTotalReview\" AS (\n    SELECT\n        ( \"TimestampUpdated\" AT TIME ZONE 'UTC' )::date AS \"Date\",\n        COUNT ( * ) AS \"DailyTotalReviewCount\"\n    FROM \"Review\"\n    GROUP BY\n        ( \"TimestampUpdated\" AT TIME ZONE 'UTC' )::date\n)\nSELECT\n    activity.\"Date\" AS \"time\",\n    COALESCE ( review.\"DailyReviewCount\", 0 ) AS \"DailyReviewCount\",\n    review.\"DailyPositiveReviewPercentage\",\n    100.0\n        * COALESCE ( review.\"DailyReviewCount\", 0 )\n        / NULLIF ( total.\"DailyTotalReviewCount\", 0 )\n        AS \"DailyTopicMentionPercentage\",\n    0.0::double precision AS \"BuildAnnouncementsLegend\",\n    0.0::double precision AS \"DiscountEventsLegend\"\nFROM \"PlayerActivity\" activity\nLEFT JOIN \"DailyReview\" review\n    ON activity.\"Date\" = review.\"Date\"\nLEFT JOIN \"DailyTotalReview\" total\n    ON activity.\"Date\" = total.\"Date\"\nWHERE $__timeFilter(activity.\"Date\")\nORDER BY activity.\"Date\";",
+                        "rawSql": "WITH \"FilteredReview\" AS (\n    SELECT\n        ( \"TimestampUpdated\" AT TIME ZONE 'UTC' )::date AS \"Date\",\n        \"IsVotedUp\"\n    FROM \"Review\"\n    WHERE\n        (\n            '${Topic:raw}' = '__all'\n            AND (\n                \"IsTopicAi\"\n                OR \"IsTopicBugs\"\n                OR \"IsTopicCrashes\"\n                OR \"IsTopicPerformance\"\n                OR \"IsTopicBalance\"\n                OR \"IsTopicCampaign\"\n                OR \"IsTopicBattles\"\n                OR \"IsTopicDlc\"\n                OR \"IsTopicContent\"\n                OR \"IsTopicMultiplayer\"\n                OR \"IsTopicUi\"\n                OR \"IsTopicGraphics\"\n                OR \"IsTopicAudio\"\n                OR \"IsTopicMods\"\n                OR \"IsTopicDifficulty\"\n                OR \"IsTopicUpdate\"\n                OR \"IsTopicDeveloper\"\n                OR \"IsTopicMonetization\"\n                OR \"IsTopicPrice\"\n            )\n        )\n        OR (\n            'IsTopicAi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAi\"\n        )\n        OR (\n            'IsTopicBugs' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBugs\"\n        )\n        OR (\n            'IsTopicCrashes' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCrashes\"\n        )\n        OR (\n            'IsTopicPerformance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPerformance\"\n        )\n        OR (\n            'IsTopicBalance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBalance\"\n        )\n        OR (\n            'IsTopicCampaign' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCampaign\"\n        )\n        OR (\n            'IsTopicBattles' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBattles\"\n        )\n        OR (\n            'IsTopicDlc' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDlc\"\n        )\n        OR (\n            'IsTopicContent' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicContent\"\n        )\n        OR (\n            'IsTopicMultiplayer' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMultiplayer\"\n        )\n        OR (\n            'IsTopicUi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUi\"\n        )\n        OR (\n            'IsTopicGraphics' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicGraphics\"\n        )\n        OR (\n            'IsTopicAudio' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAudio\"\n        )\n        OR (\n            'IsTopicMods' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMods\"\n        )\n        OR (\n            'IsTopicDifficulty' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDifficulty\"\n        )\n        OR (\n            'IsTopicUpdate' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUpdate\"\n        )\n        OR (\n            'IsTopicDeveloper' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDeveloper\"\n        )\n        OR (\n            'IsTopicMonetization' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMonetization\"\n        )\n        OR (\n            'IsTopicPrice' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPrice\"\n        )\n),\n\"DailyReview\" AS (\n    SELECT\n        \"Date\",\n        COUNT ( * ) AS \"DailyReviewCount\",\n        AVG (\n            CASE\n                WHEN \"IsVotedUp\" THEN 1.0\n                ELSE 0.0\n            END\n        ) * 100.0 AS \"DailyPositiveReviewPercentage\"\n    FROM \"FilteredReview\"\n    GROUP BY \"Date\"\n),\n\"DailyTotalReview\" AS (\n    SELECT\n        ( \"TimestampUpdated\" AT TIME ZONE 'UTC' )::date AS \"Date\",\n        COUNT ( * ) AS \"DailyTotalReviewCount\"\n    FROM \"Review\"\n    GROUP BY\n        ( \"TimestampUpdated\" AT TIME ZONE 'UTC' )::date\n)\nSELECT\n    activity.\"Date\" AS \"time\",\n    COALESCE ( review.\"DailyReviewCount\", 0 ) AS \"DailyReviewCount\",\n    review.\"DailyPositiveReviewPercentage\",\n    100.0\n        * COALESCE ( review.\"DailyReviewCount\", 0 )\n        / NULLIF ( total.\"DailyTotalReviewCount\", 0 )\n        AS \"DailyTopicMentionPercentage\",\n    0.0::double precision AS \"BuildAnnouncementsLegend\",\n    0.0::double precision AS \"DiscountEventsLegend\"\nFROM \"PlayerActivity\" activity\nLEFT JOIN \"DailyReview\" review\n    ON activity.\"Date\" = review.\"Date\"\nLEFT JOIN \"DailyTotalReview\" total\n    ON activity.\"Date\" = total.\"Date\"\nWHERE $__timeFilter(activity.\"Date\")\nORDER BY activity.\"Date\";",
                         "sql": {
                           "columns": [
                             {
@@ -239,7 +239,7 @@
                     },
                     "insertNulls": false,
                     "lineInterpolation": "linear",
-                    "lineWidth": 1,
+                    "lineWidth": 2,
                     "pointSize": 5,
                     "scaleDistribution": {
                       "type": "linear"
@@ -283,7 +283,7 @@
                       {
                         "id": "color",
                         "value": {
-                          "fixedColor": "#02428e",
+                          "fixedColor": "semi-dark-blue",
                           "mode": "fixed"
                         }
                       },
@@ -419,7 +419,7 @@
         "kind": "Panel",
         "spec": {
           "id": 2,
-          "title": "Topic Mention Percentage",
+          "title": "",
           "description": "",
           "links": [],
           "data": {
@@ -438,7 +438,7 @@
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT\n    100.0 * COUNT ( * ) FILTER (\n        WHERE\n            ( 'IsTopicAi' IN ( ${Topic:sqlstring} ) AND \"IsTopicAi\" )\n            OR ( 'IsTopicBugs' IN ( ${Topic:sqlstring} ) AND \"IsTopicBugs\" )\n            OR ( 'IsTopicCrashes' IN ( ${Topic:sqlstring} ) AND \"IsTopicCrashes\" )\n            OR ( 'IsTopicPerformance' IN ( ${Topic:sqlstring} ) AND \"IsTopicPerformance\" )\n            OR ( 'IsTopicBalance' IN ( ${Topic:sqlstring} ) AND \"IsTopicBalance\" )\n            OR ( 'IsTopicCampaign' IN ( ${Topic:sqlstring} ) AND \"IsTopicCampaign\" )\n            OR ( 'IsTopicBattles' IN ( ${Topic:sqlstring} ) AND \"IsTopicBattles\" )\n            OR ( 'IsTopicDlc' IN ( ${Topic:sqlstring} ) AND \"IsTopicDlc\" )\n            OR ( 'IsTopicPrice' IN ( ${Topic:sqlstring} ) AND \"IsTopicPrice\" )\n            OR ( 'IsTopicContent' IN ( ${Topic:sqlstring} ) AND \"IsTopicContent\" )\n            OR ( 'IsTopicMultiplayer' IN ( ${Topic:sqlstring} ) AND \"IsTopicMultiplayer\" )\n            OR ( 'IsTopicUi' IN ( ${Topic:sqlstring} ) AND \"IsTopicUi\" )\n            OR ( 'IsTopicGraphics' IN ( ${Topic:sqlstring} ) AND \"IsTopicGraphics\" )\n            OR ( 'IsTopicAudio' IN ( ${Topic:sqlstring} ) AND \"IsTopicAudio\" )\n            OR ( 'IsTopicMods' IN ( ${Topic:sqlstring} ) AND \"IsTopicMods\" )\n            OR ( 'IsTopicDifficulty' IN ( ${Topic:sqlstring} ) AND \"IsTopicDifficulty\" )\n            OR ( 'IsTopicUpdate' IN ( ${Topic:sqlstring} ) AND \"IsTopicUpdate\" )\n            OR ( 'IsTopicDeveloper' IN ( ${Topic:sqlstring} ) AND \"IsTopicDeveloper\" )\n            OR ( 'IsTopicMonetization' IN ( ${Topic:sqlstring} ) AND \"IsTopicMonetization\" )\n    ) / NULLIF ( COUNT ( * ), 0 ) AS \"TopicMentionPercentage\"\nFROM \"Review\"\nWHERE $__timeFilter(\"TimestampUpdated\");",
+                        "rawSql": "SELECT\n    100.0 * COUNT ( * ) FILTER (\n        WHERE\n            (\n                '${Topic:raw}' = '__all'\n                AND (\n                    \"IsTopicAi\"\n                    OR \"IsTopicBugs\"\n                    OR \"IsTopicCrashes\"\n                    OR \"IsTopicPerformance\"\n                    OR \"IsTopicBalance\"\n                    OR \"IsTopicCampaign\"\n                    OR \"IsTopicBattles\"\n                    OR \"IsTopicDlc\"\n                    OR \"IsTopicPrice\"\n                    OR \"IsTopicContent\"\n                    OR \"IsTopicMultiplayer\"\n                    OR \"IsTopicUi\"\n                    OR \"IsTopicGraphics\"\n                    OR \"IsTopicAudio\"\n                    OR \"IsTopicMods\"\n                    OR \"IsTopicDifficulty\"\n                    OR \"IsTopicUpdate\"\n                    OR \"IsTopicDeveloper\"\n                    OR \"IsTopicMonetization\"\n                )\n            )\n            OR (\n                'IsTopicAi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicAi\"\n            )\n            OR (\n                'IsTopicBugs' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicBugs\"\n            )\n            OR (\n                'IsTopicCrashes' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicCrashes\"\n            )\n            OR (\n                'IsTopicPerformance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicPerformance\"\n            )\n            OR (\n                'IsTopicBalance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicBalance\"\n            )\n            OR (\n                'IsTopicCampaign' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicCampaign\"\n            )\n            OR (\n                'IsTopicBattles' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicBattles\"\n            )\n            OR (\n                'IsTopicDlc' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicDlc\"\n            )\n            OR (\n                'IsTopicPrice' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicPrice\"\n            )\n            OR (\n                'IsTopicContent' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicContent\"\n            )\n            OR (\n                'IsTopicMultiplayer' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicMultiplayer\"\n            )\n            OR (\n                'IsTopicUi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicUi\"\n            )\n            OR (\n                'IsTopicGraphics' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicGraphics\"\n            )\n            OR (\n                'IsTopicAudio' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicAudio\"\n            )\n            OR (\n                'IsTopicMods' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicMods\"\n            )\n            OR (\n                'IsTopicDifficulty' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicDifficulty\"\n            )\n            OR (\n                'IsTopicUpdate' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicUpdate\"\n            )\n            OR (\n                'IsTopicDeveloper' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicDeveloper\"\n            )\n            OR (\n                'IsTopicMonetization' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicMonetization\"\n            )\n    ) / NULLIF ( COUNT ( * ), 0 ) AS \"TopicMentionPercentage\"\nFROM \"Review\"\nWHERE $__timeFilter(\"TimestampUpdated\");",
                         "sql": {
                           "columns": [
                             {
@@ -479,7 +479,7 @@
               "options": {
                 "colorMode": "none",
                 "graphMode": "area",
-                "justifyMode": "auto",
+                "justifyMode": "center",
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
@@ -490,11 +490,12 @@
                   "values": false
                 },
                 "showPercentChange": false,
-                "textMode": "auto",
-                "wideLayout": true
+                "textMode": "value_and_name",
+                "wideLayout": false
               },
               "fieldConfig": {
                 "defaults": {
+                  "displayName": "Topic Mention Percentage",
                   "unit": "percent",
                   "thresholds": {
                     "mode": "absolute",
@@ -523,7 +524,7 @@
         "kind": "Panel",
         "spec": {
           "id": 3,
-          "title": "Average Positive Reviews",
+          "title": "",
           "description": "",
           "links": [],
           "data": {
@@ -542,7 +543,7 @@
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT\n    AVG (\n        CASE\n            WHEN \"IsVotedUp\" THEN 1.0\n            ELSE 0.0\n        END\n    ) * 100.0 AS \"AveragePositiveReviews\"\nFROM \"Review\"\nWHERE $__timeFilter(\"TimestampUpdated\")\n    AND (\n        ( 'IsTopicAi' IN ( ${Topic:sqlstring} ) AND \"IsTopicAi\" )\n        OR ( 'IsTopicBugs' IN ( ${Topic:sqlstring} ) AND \"IsTopicBugs\" )\n        OR ( 'IsTopicCrashes' IN ( ${Topic:sqlstring} ) AND \"IsTopicCrashes\" )\n        OR ( 'IsTopicPerformance' IN ( ${Topic:sqlstring} ) AND \"IsTopicPerformance\" )\n        OR ( 'IsTopicBalance' IN ( ${Topic:sqlstring} ) AND \"IsTopicBalance\" )\n        OR ( 'IsTopicCampaign' IN ( ${Topic:sqlstring} ) AND \"IsTopicCampaign\" )\n        OR ( 'IsTopicBattles' IN ( ${Topic:sqlstring} ) AND \"IsTopicBattles\" )\n        OR ( 'IsTopicDlc' IN ( ${Topic:sqlstring} ) AND \"IsTopicDlc\" )\n        OR ( 'IsTopicPrice' IN ( ${Topic:sqlstring} ) AND \"IsTopicPrice\" )\n        OR ( 'IsTopicContent' IN ( ${Topic:sqlstring} ) AND \"IsTopicContent\" )\n        OR ( 'IsTopicMultiplayer' IN ( ${Topic:sqlstring} ) AND \"IsTopicMultiplayer\" )\n        OR ( 'IsTopicUi' IN ( ${Topic:sqlstring} ) AND \"IsTopicUi\" )\n        OR ( 'IsTopicGraphics' IN ( ${Topic:sqlstring} ) AND \"IsTopicGraphics\" )\n        OR ( 'IsTopicAudio' IN ( ${Topic:sqlstring} ) AND \"IsTopicAudio\" )\n        OR ( 'IsTopicMods' IN ( ${Topic:sqlstring} ) AND \"IsTopicMods\" )\n        OR ( 'IsTopicDifficulty' IN ( ${Topic:sqlstring} ) AND \"IsTopicDifficulty\" )\n        OR ( 'IsTopicUpdate' IN ( ${Topic:sqlstring} ) AND \"IsTopicUpdate\" )\n        OR ( 'IsTopicDeveloper' IN ( ${Topic:sqlstring} ) AND \"IsTopicDeveloper\" )\n        OR ( 'IsTopicMonetization' IN ( ${Topic:sqlstring} ) AND \"IsTopicMonetization\" )\n    );",
+                        "rawSql": "SELECT\n    AVG (\n        CASE\n            WHEN \"IsVotedUp\" THEN 1.0\n            ELSE 0.0\n        END\n    ) * 100.0 AS \"AveragePositiveReviews\"\nFROM \"Review\"\nWHERE $__timeFilter(\"TimestampUpdated\")\n    AND (\n        (\n            '${Topic:raw}' = '__all'\n            AND (\n                \"IsTopicAi\"\n                OR \"IsTopicBugs\"\n                OR \"IsTopicCrashes\"\n                OR \"IsTopicPerformance\"\n                OR \"IsTopicBalance\"\n                OR \"IsTopicCampaign\"\n                OR \"IsTopicBattles\"\n                OR \"IsTopicDlc\"\n                OR \"IsTopicPrice\"\n                OR \"IsTopicContent\"\n                OR \"IsTopicMultiplayer\"\n                OR \"IsTopicUi\"\n                OR \"IsTopicGraphics\"\n                OR \"IsTopicAudio\"\n                OR \"IsTopicMods\"\n                OR \"IsTopicDifficulty\"\n                OR \"IsTopicUpdate\"\n                OR \"IsTopicDeveloper\"\n                OR \"IsTopicMonetization\"\n            )\n        )\n        OR (\n            'IsTopicAi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAi\"\n        )\n        OR (\n            'IsTopicBugs' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBugs\"\n        )\n        OR (\n            'IsTopicCrashes' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCrashes\"\n        )\n        OR (\n            'IsTopicPerformance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPerformance\"\n        )\n        OR (\n            'IsTopicBalance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBalance\"\n        )\n        OR (\n            'IsTopicCampaign' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCampaign\"\n        )\n        OR (\n            'IsTopicBattles' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBattles\"\n        )\n        OR (\n            'IsTopicDlc' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDlc\"\n        )\n        OR (\n            'IsTopicPrice' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPrice\"\n        )\n        OR (\n            'IsTopicContent' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicContent\"\n        )\n        OR (\n            'IsTopicMultiplayer' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMultiplayer\"\n        )\n        OR (\n            'IsTopicUi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUi\"\n        )\n        OR (\n            'IsTopicGraphics' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicGraphics\"\n        )\n        OR (\n            'IsTopicAudio' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAudio\"\n        )\n        OR (\n            'IsTopicMods' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMods\"\n        )\n        OR (\n            'IsTopicDifficulty' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDifficulty\"\n        )\n        OR (\n            'IsTopicUpdate' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUpdate\"\n        )\n        OR (\n            'IsTopicDeveloper' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDeveloper\"\n        )\n        OR (\n            'IsTopicMonetization' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMonetization\"\n        )\n    );",
                         "sql": {
                           "columns": [
                             {
@@ -582,8 +583,8 @@
             "spec": {
               "options": {
                 "colorMode": "none",
-                "graphMode": "area",
-                "justifyMode": "auto",
+                "graphMode": "none",
+                "justifyMode": "center",
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
@@ -594,11 +595,13 @@
                   "values": false
                 },
                 "showPercentChange": false,
-                "textMode": "auto",
-                "wideLayout": true
+                "text": {},
+                "textMode": "value_and_name",
+                "wideLayout": false
               },
               "fieldConfig": {
                 "defaults": {
+                  "displayName": "Average Positive Reviews",
                   "unit": "percent",
                   "thresholds": {
                     "mode": "absolute",
@@ -627,7 +630,7 @@
         "kind": "Panel",
         "spec": {
           "id": 4,
-          "title": "Reviews with Topic",
+          "title": "",
           "description": "",
           "links": [],
           "data": {
@@ -646,7 +649,7 @@
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT\n    COUNT ( * ) AS \"ReviewsWithTopic\"\nFROM \"Review\"\nWHERE $__timeFilter(\"TimestampUpdated\")\n    AND (\n        ( 'IsTopicAi' IN ( ${Topic:sqlstring} ) AND \"IsTopicAi\" )\n        OR ( 'IsTopicBugs' IN ( ${Topic:sqlstring} ) AND \"IsTopicBugs\" )\n        OR ( 'IsTopicCrashes' IN ( ${Topic:sqlstring} ) AND \"IsTopicCrashes\" )\n        OR ( 'IsTopicPerformance' IN ( ${Topic:sqlstring} ) AND \"IsTopicPerformance\" )\n        OR ( 'IsTopicBalance' IN ( ${Topic:sqlstring} ) AND \"IsTopicBalance\" )\n        OR ( 'IsTopicCampaign' IN ( ${Topic:sqlstring} ) AND \"IsTopicCampaign\" )\n        OR ( 'IsTopicBattles' IN ( ${Topic:sqlstring} ) AND \"IsTopicBattles\" )\n        OR ( 'IsTopicDlc' IN ( ${Topic:sqlstring} ) AND \"IsTopicDlc\" )\n        OR ( 'IsTopicPrice' IN ( ${Topic:sqlstring} ) AND \"IsTopicPrice\" )\n        OR ( 'IsTopicContent' IN ( ${Topic:sqlstring} ) AND \"IsTopicContent\" )\n        OR ( 'IsTopicMultiplayer' IN ( ${Topic:sqlstring} ) AND \"IsTopicMultiplayer\" )\n        OR ( 'IsTopicUi' IN ( ${Topic:sqlstring} ) AND \"IsTopicUi\" )\n        OR ( 'IsTopicGraphics' IN ( ${Topic:sqlstring} ) AND \"IsTopicGraphics\" )\n        OR ( 'IsTopicAudio' IN ( ${Topic:sqlstring} ) AND \"IsTopicAudio\" )\n        OR ( 'IsTopicMods' IN ( ${Topic:sqlstring} ) AND \"IsTopicMods\" )\n        OR ( 'IsTopicDifficulty' IN ( ${Topic:sqlstring} ) AND \"IsTopicDifficulty\" )\n        OR ( 'IsTopicUpdate' IN ( ${Topic:sqlstring} ) AND \"IsTopicUpdate\" )\n        OR ( 'IsTopicDeveloper' IN ( ${Topic:sqlstring} ) AND \"IsTopicDeveloper\" )\n        OR ( 'IsTopicMonetization' IN ( ${Topic:sqlstring} ) AND \"IsTopicMonetization\" )\n    );",
+                        "rawSql": "SELECT\n    COUNT ( * ) AS \"ReviewsWithTopic\"\nFROM \"Review\"\nWHERE $__timeFilter(\"TimestampUpdated\")\n    AND (\n        (\n            '${Topic:raw}' = '__all'\n            AND (\n                \"IsTopicAi\"\n                OR \"IsTopicBugs\"\n                OR \"IsTopicCrashes\"\n                OR \"IsTopicPerformance\"\n                OR \"IsTopicBalance\"\n                OR \"IsTopicCampaign\"\n                OR \"IsTopicBattles\"\n                OR \"IsTopicDlc\"\n                OR \"IsTopicPrice\"\n                OR \"IsTopicContent\"\n                OR \"IsTopicMultiplayer\"\n                OR \"IsTopicUi\"\n                OR \"IsTopicGraphics\"\n                OR \"IsTopicAudio\"\n                OR \"IsTopicMods\"\n                OR \"IsTopicDifficulty\"\n                OR \"IsTopicUpdate\"\n                OR \"IsTopicDeveloper\"\n                OR \"IsTopicMonetization\"\n            )\n        )\n        OR (\n            'IsTopicAi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAi\"\n        )\n        OR (\n            'IsTopicBugs' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBugs\"\n        )\n        OR (\n            'IsTopicCrashes' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCrashes\"\n        )\n        OR (\n            'IsTopicPerformance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPerformance\"\n        )\n        OR (\n            'IsTopicBalance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBalance\"\n        )\n        OR (\n            'IsTopicCampaign' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCampaign\"\n        )\n        OR (\n            'IsTopicBattles' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBattles\"\n        )\n        OR (\n            'IsTopicDlc' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDlc\"\n        )\n        OR (\n            'IsTopicPrice' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPrice\"\n        )\n        OR (\n            'IsTopicContent' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicContent\"\n        )\n        OR (\n            'IsTopicMultiplayer' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMultiplayer\"\n        )\n        OR (\n            'IsTopicUi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUi\"\n        )\n        OR (\n            'IsTopicGraphics' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicGraphics\"\n        )\n        OR (\n            'IsTopicAudio' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAudio\"\n        )\n        OR (\n            'IsTopicMods' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMods\"\n        )\n        OR (\n            'IsTopicDifficulty' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDifficulty\"\n        )\n        OR (\n            'IsTopicUpdate' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUpdate\"\n        )\n        OR (\n            'IsTopicDeveloper' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDeveloper\"\n        )\n        OR (\n            'IsTopicMonetization' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMonetization\"\n        )\n    );",
                         "sql": {
                           "columns": [
                             {
@@ -687,7 +690,7 @@
               "options": {
                 "colorMode": "none",
                 "graphMode": "area",
-                "justifyMode": "auto",
+                "justifyMode": "center",
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
@@ -698,11 +701,12 @@
                   "values": false
                 },
                 "showPercentChange": false,
-                "textMode": "auto",
-                "wideLayout": true
+                "textMode": "value_and_name",
+                "wideLayout": false
               },
               "fieldConfig": {
                 "defaults": {
+                  "displayName": "Reviews with Topic",
                   "unit": "locale",
                   "decimals": 0,
                   "thresholds": {
@@ -751,7 +755,7 @@
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "WITH \"FilteredReview\" AS (\n    SELECT\n        ( \"TimestampUpdated\" AT TIME ZONE 'UTC' )::date AS \"Date\",\n        \"IsVotedUp\"\n    FROM \"Review\"\n    WHERE\n        ( 'IsTopicAi' IN ( ${Topic:sqlstring} ) AND \"IsTopicAi\" )\n        OR ( 'IsTopicBugs' IN ( ${Topic:sqlstring} ) AND \"IsTopicBugs\" )\n        OR ( 'IsTopicCrashes' IN ( ${Topic:sqlstring} ) AND \"IsTopicCrashes\" )\n        OR ( 'IsTopicPerformance' IN ( ${Topic:sqlstring} ) AND \"IsTopicPerformance\" )\n        OR ( 'IsTopicBalance' IN ( ${Topic:sqlstring} ) AND \"IsTopicBalance\" )\n        OR ( 'IsTopicCampaign' IN ( ${Topic:sqlstring} ) AND \"IsTopicCampaign\" )\n        OR ( 'IsTopicBattles' IN ( ${Topic:sqlstring} ) AND \"IsTopicBattles\" )\n        OR ( 'IsTopicDlc' IN ( ${Topic:sqlstring} ) AND \"IsTopicDlc\" )\n        OR ( 'IsTopicPrice' IN ( ${Topic:sqlstring} ) AND \"IsTopicPrice\" )\n        OR ( 'IsTopicContent' IN ( ${Topic:sqlstring} ) AND \"IsTopicContent\" )\n        OR ( 'IsTopicMultiplayer' IN ( ${Topic:sqlstring} ) AND \"IsTopicMultiplayer\" )\n        OR ( 'IsTopicUi' IN ( ${Topic:sqlstring} ) AND \"IsTopicUi\" )\n        OR ( 'IsTopicGraphics' IN ( ${Topic:sqlstring} ) AND \"IsTopicGraphics\" )\n        OR ( 'IsTopicAudio' IN ( ${Topic:sqlstring} ) AND \"IsTopicAudio\" )\n        OR ( 'IsTopicMods' IN ( ${Topic:sqlstring} ) AND \"IsTopicMods\" )\n        OR ( 'IsTopicDifficulty' IN ( ${Topic:sqlstring} ) AND \"IsTopicDifficulty\" )\n        OR ( 'IsTopicUpdate' IN ( ${Topic:sqlstring} ) AND \"IsTopicUpdate\" )\n        OR ( 'IsTopicDeveloper' IN ( ${Topic:sqlstring} ) AND \"IsTopicDeveloper\" )\n        OR ( 'IsTopicMonetization' IN ( ${Topic:sqlstring} ) AND \"IsTopicMonetization\" )\n),\n\"BuildAnnouncement\" AS (\n    SELECT\n        \"BuildId\",\n        ( \"Timestamp\" AT TIME ZONE 'UTC' )::date AS \"Date\",\n        \"PatchTitle\",\n        CONCAT_WS (\n            ', ',\n            CASE WHEN \"IsPatch\" THEN 'Patch' END,\n            CASE WHEN \"IsHotfix\" THEN 'Hotfix' END,\n            CASE WHEN \"IsFreeContent\" THEN 'Free Content' END,\n            CASE WHEN \"IsPaidContent\" THEN 'Paid Content' END\n        ) AS \"ReleaseType\"\n    FROM \"Build\"\n    WHERE $__timeFilter(\"Timestamp\")\n        AND (\n            \"IsPatch\"\n            OR \"IsHotfix\"\n            OR \"IsFreeContent\"\n            OR \"IsPaidContent\"\n        )\n),\n\"ReviewWindow\" AS (\n    SELECT\n        build.\"BuildId\",\n        build.\"Date\",\n        build.\"PatchTitle\",\n        build.\"ReleaseType\",\n        AVG (\n            CASE\n                WHEN review.\"Date\" BETWEEN build.\"Date\" - 7 AND build.\"Date\" - 1\n                THEN CASE WHEN review.\"IsVotedUp\" THEN 1.0 ELSE 0.0 END\n            END\n        ) AS \"Past7DayPositiveReviewAverage\",\n        AVG (\n            CASE\n                WHEN review.\"Date\" BETWEEN build.\"Date\" AND build.\"Date\" + 6\n                THEN CASE WHEN review.\"IsVotedUp\" THEN 1.0 ELSE 0.0 END\n            END\n        ) AS \"Next7DayPositiveReviewAverage\"\n    FROM \"BuildAnnouncement\" build\n    LEFT JOIN \"FilteredReview\" review\n        ON review.\"Date\" BETWEEN build.\"Date\" - 7 AND build.\"Date\" + 6\n    GROUP BY\n        build.\"BuildId\",\n        build.\"Date\",\n        build.\"PatchTitle\",\n        build.\"ReleaseType\"\n)\nSELECT\n    TO_CHAR ( \"Date\", 'YYYY-MM-DD' ) AS \"Date\",\n    \"PatchTitle\",\n    \"ReleaseType\",\n    \"Past7DayPositiveReviewAverage\",\n    \"Next7DayPositiveReviewAverage\",\n    (\n        \"Next7DayPositiveReviewAverage\"\n        - \"Past7DayPositiveReviewAverage\"\n    ) / NULLIF ( \"Past7DayPositiveReviewAverage\", 0 )\n        AS \"7DayPositiveReviewAverageReturn\"\nFROM \"ReviewWindow\"\nORDER BY \"Date\" DESC;",
+                        "rawSql": "WITH \"FilteredReview\" AS (\n    SELECT\n        ( \"TimestampUpdated\" AT TIME ZONE 'UTC' )::date AS \"Date\",\n        \"IsVotedUp\"\n    FROM \"Review\"\n    WHERE\n        (\n            '${Topic:raw}' = '__all'\n            AND (\n                \"IsTopicAi\"\n                OR \"IsTopicBugs\"\n                OR \"IsTopicCrashes\"\n                OR \"IsTopicPerformance\"\n                OR \"IsTopicBalance\"\n                OR \"IsTopicCampaign\"\n                OR \"IsTopicBattles\"\n                OR \"IsTopicDlc\"\n                OR \"IsTopicPrice\"\n                OR \"IsTopicContent\"\n                OR \"IsTopicMultiplayer\"\n                OR \"IsTopicUi\"\n                OR \"IsTopicGraphics\"\n                OR \"IsTopicAudio\"\n                OR \"IsTopicMods\"\n                OR \"IsTopicDifficulty\"\n                OR \"IsTopicUpdate\"\n                OR \"IsTopicDeveloper\"\n                OR \"IsTopicMonetization\"\n            )\n        )\n        OR (\n            'IsTopicAi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAi\"\n        )\n        OR (\n            'IsTopicBugs' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBugs\"\n        )\n        OR (\n            'IsTopicCrashes' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCrashes\"\n        )\n        OR (\n            'IsTopicPerformance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPerformance\"\n        )\n        OR (\n            'IsTopicBalance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBalance\"\n        )\n        OR (\n            'IsTopicCampaign' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicCampaign\"\n        )\n        OR (\n            'IsTopicBattles' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicBattles\"\n        )\n        OR (\n            'IsTopicDlc' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDlc\"\n        )\n        OR (\n            'IsTopicPrice' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicPrice\"\n        )\n        OR (\n            'IsTopicContent' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicContent\"\n        )\n        OR (\n            'IsTopicMultiplayer' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMultiplayer\"\n        )\n        OR (\n            'IsTopicUi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUi\"\n        )\n        OR (\n            'IsTopicGraphics' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicGraphics\"\n        )\n        OR (\n            'IsTopicAudio' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicAudio\"\n        )\n        OR (\n            'IsTopicMods' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMods\"\n        )\n        OR (\n            'IsTopicDifficulty' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDifficulty\"\n        )\n        OR (\n            'IsTopicUpdate' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicUpdate\"\n        )\n        OR (\n            'IsTopicDeveloper' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicDeveloper\"\n        )\n        OR (\n            'IsTopicMonetization' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n            AND \"IsTopicMonetization\"\n        )\n),\n\"BuildAnnouncement\" AS (\n    SELECT\n        \"BuildId\",\n        ( \"Timestamp\" AT TIME ZONE 'UTC' )::date AS \"Date\",\n        \"PatchTitle\",\n        CONCAT_WS (\n            ', ',\n            CASE WHEN \"IsPatch\" THEN 'Patch' END,\n            CASE WHEN \"IsHotfix\" THEN 'Hotfix' END,\n            CASE WHEN \"IsFreeContent\" THEN 'Free Content' END,\n            CASE WHEN \"IsPaidContent\" THEN 'Paid Content' END\n        ) AS \"ReleaseType\"\n    FROM \"Build\"\n    WHERE $__timeFilter(\"Timestamp\")\n        AND (\n            \"IsPatch\"\n            OR \"IsHotfix\"\n            OR \"IsFreeContent\"\n            OR \"IsPaidContent\"\n        )\n        AND (\n            '${Topic:raw}' = '__all'\n            OR (\n                'IsTopicAi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicAi\"\n            )\n            OR (\n                'IsTopicBugs' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicBugs\"\n            )\n            OR (\n                'IsTopicCrashes' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicCrashes\"\n            )\n            OR (\n                'IsTopicPerformance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicPerformance\"\n            )\n            OR (\n                'IsTopicBalance' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicBalance\"\n            )\n            OR (\n                'IsTopicCampaign' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicCampaign\"\n            )\n            OR (\n                'IsTopicBattles' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicBattles\"\n            )\n            OR (\n                'IsTopicDlc' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicDlc\"\n            )\n            OR (\n                'IsTopicPrice' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicPrice\"\n            )\n            OR (\n                'IsTopicContent' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicContent\"\n            )\n            OR (\n                'IsTopicMultiplayer' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicMultiplayer\"\n            )\n            OR (\n                'IsTopicUi' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicUi\"\n            )\n            OR (\n                'IsTopicGraphics' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicGraphics\"\n            )\n            OR (\n                'IsTopicAudio' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicAudio\"\n            )\n            OR (\n                'IsTopicMods' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicMods\"\n            )\n            OR (\n                'IsTopicDifficulty' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicDifficulty\"\n            )\n            OR (\n                'IsTopicUpdate' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicUpdate\"\n            )\n            OR (\n                'IsTopicDeveloper' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicDeveloper\"\n            )\n            OR (\n                'IsTopicMonetization' = ANY ( string_to_array ( '${Topic:raw}', ',' ) )\n                AND \"IsTopicMonetization\"\n            )\n        )\n),\n\"ReviewWindow\" AS (\n    SELECT\n        build.\"BuildId\",\n        build.\"Date\",\n        build.\"PatchTitle\",\n        build.\"ReleaseType\",\n        AVG (\n            CASE\n                WHEN review.\"Date\" BETWEEN build.\"Date\" - 7 AND build.\"Date\" - 1\n                THEN CASE WHEN review.\"IsVotedUp\" THEN 1.0 ELSE 0.0 END\n            END\n        ) AS \"Past7DayPositiveReviewAverage\",\n        AVG (\n            CASE\n                WHEN review.\"Date\" BETWEEN build.\"Date\" AND build.\"Date\" + 6\n                THEN CASE WHEN review.\"IsVotedUp\" THEN 1.0 ELSE 0.0 END\n            END\n        ) AS \"Next7DayPositiveReviewAverage\"\n    FROM \"BuildAnnouncement\" build\n    LEFT JOIN \"FilteredReview\" review\n        ON review.\"Date\" BETWEEN build.\"Date\" - 7 AND build.\"Date\" + 6\n    GROUP BY\n        build.\"BuildId\",\n        build.\"Date\",\n        build.\"PatchTitle\",\n        build.\"ReleaseType\"\n)\nSELECT\n    TO_CHAR ( \"Date\", 'YYYY-MM-DD' ) AS \"Date\",\n    \"PatchTitle\",\n    \"ReleaseType\",\n    \"Past7DayPositiveReviewAverage\",\n    \"Next7DayPositiveReviewAverage\",\n    (\n        \"Next7DayPositiveReviewAverage\"\n        - \"Past7DayPositiveReviewAverage\"\n    ) / NULLIF ( \"Past7DayPositiveReviewAverage\", 0 )\n        AS \"7DayPositiveReviewAverageReturn\"\nFROM \"ReviewWindow\"\nORDER BY \"Date\" DESC;",
                         "sql": {
                           "columns": [
                             {
@@ -790,7 +794,8 @@
             "version": "13.2.3",
             "spec": {
               "options": {
-                "cellHeight": "sm",
+                "cellHeight": "md",
+                "enablePagination": false,
                 "showHeader": true
               },
               "fieldConfig": {
@@ -953,7 +958,7 @@
               "x": 0,
               "y": 0,
               "width": 8,
-              "height": 4,
+              "height": 3,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-3"
@@ -966,7 +971,7 @@
               "x": 8,
               "y": 0,
               "width": 8,
-              "height": 4,
+              "height": 3,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-2"
@@ -979,7 +984,7 @@
               "x": 16,
               "y": 0,
               "width": 8,
-              "height": 4,
+              "height": 3,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-4"
@@ -990,9 +995,9 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 4,
+              "y": 3,
               "width": 24,
-              "height": 11,
+              "height": 10,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-1"
@@ -1003,9 +1008,9 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 15,
+              "y": 13,
               "width": 24,
-              "height": 7,
+              "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-5"
@@ -1057,10 +1062,11 @@
           "options": [],
           "multi": true,
           "includeAll": true,
+          "allValue": "__all",
           "label": "Topic",
           "hide": "dontHide",
           "skipUrlSync": false,
-          "allowCustomValue": true,
+          "allowCustomValue": false,
           "valuesFormat": "csv"
         }
       }
