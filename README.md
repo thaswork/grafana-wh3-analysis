@@ -19,6 +19,7 @@ Similar questions are asked that were present in the previous project except wit
 - What effect does having discounts events, and build announcements occuring in conjunction have on players?
 
 ## Tools
+
 - Docker
 - PostgreSQL
 - Python
@@ -91,7 +92,8 @@ Many of the findings were similar to the previous Power BI project.
 
 ## Limitations
 
-Similar limitations apply
+Similar limitations apply as from the previous project.
+
 - Limited time span of data between 2024 to 2026 due to reliable historical data missing before 2024
 - The analysis is observational and does not prove that releases caused changes in sentiment or player activity
 - While promotional/seasonal discount events are included, there may still be other marketing campaigns, weekends, and unrelated events also influenced the results
