@@ -1,6 +1,6 @@
 # Player Review and Activity Analysis for Warhammer 3 with Grafana
 
-This project was born out of the previous Power BI analysis of player sentiment, and activity in Total Warhammer 3. This project explores an existing dataset through a different toolset, particularly PostgreSQL and SQL, while introducing start and end annotations for discount events using Grafana. This added another layer of events to see their impact on players, and the data included a final price of the discount for comparison.
+This project was born out of the previous Power BI analysis of player sentiment, and activity in Total Warhammer 3. The project explores an existing dataset through a different toolset using PostgreSQL, and SQL. It introduces start, and end annotations for discount events using Grafana. These events provided another view on player trends, and also included a final price of the discount for comparison.
 
 ![Player Activity with Releases](docs/grafana_review_overview.png)
 
@@ -19,10 +19,10 @@ Similar questions are asked that were present in the previous project except wit
 ## Tools
 
 - Grafana
-- Docker
-- PostgreSQL
-- Python
 - SQL
+- Python
+- PostgreSQL
+- Docker
 
 ## Data
 
@@ -45,7 +45,7 @@ Similar questions are asked that were present in the previous project except wit
 
 ### Player Review
 
-The Player Review dashboard retained its core functionalty present in the previous project that looked beyond the overall Steam rating and examined what players were actually discussing. With the better visual integration of discount events these could be better analyzed for affect on activity in additiona to build announcements.
+The Player Review dashboard retained its core functionalty present in the previous project that looked beyond the overall Steam rating and examined what players were actually discussing. Integration of start/end dates for discount events improved visual analysis for player sentiment alongside build annoucnements.
 
 - Filter reviews by topic and date
 - Compare review volume with positive recommendation percentage
@@ -55,9 +55,9 @@ The Player Review dashboard retained its core functionalty present in the previo
 
 ![Player Sentiment](docs/grafana_review_overview.png)
 
-One example is constraining the topic's affect on player sentiment for the game's cost, such as for Monetization (reviews about strategies for payment or commercial practices) and Price (reviews about the actual affordability of the game). In the brief time span example there is a small visible pattern where generally the higher peaks for these topics are not within a discount event. This could suggest the impact of discounts on reviews involving cost is minor, and could be examined further for the discount's final cost. 
+In the sample time span filtering reviews by Monetization (payment practices) and Price (affordability) visibly shows that some peaks in these topics fall outside discount events. Visually there are small dips during discount events that suggests discounts may have limited influence on cost-related reviews relative to other factors during that time.
 
-Lastly, the "Related Build Announcements" correctly shows that there aren't any builds that involve the selected topics for Monetization and Price.
+The "Related Build Announcements" panel correctly shows no build announcements since none are associated with either topic.
 
 ![Player Sentiment](docs/grafana_review_discount.png)
 
@@ -69,13 +69,13 @@ The project has most of the features from before, in addition to annotations for
 - Daily highs and lows
 - 7 day averages
 - 30 day averages
-- Interactive annotations for Build Announcement and Discount Event
+- Interactive annotations for Build Announcements and Discount Events
 
 ![Player Engagement](docs/grafana_activity_overview.png)
 
 ![Player Engagement](docs/grafana_activity_discount.png)
 
-## Key Findings and Analysis Questions
+## Key Findings and Further Investigations
 
 Many of the findings were similar to the previous Power BI project, and inspire future anaylsis.
 
@@ -102,30 +102,34 @@ Similar limitations apply as from the previous project.
 - Steam reviewers may not represent the full player population
 - Short analysis windows can overlap with other build announcements or events
 
-
 ## Local Setup
 
-If you have data ready, or want to use provided .csv this is the setup overview
+The repository includes 4 prepared .csv datasets, the PostgreSQL creation script, and both Grafana dashboards. The following can be used to recreate the project locally. VS Code with PostgreSQL and SQLTools extensions can optionally be used.
 
-- Configure your .env following the .env.example
-- Recommended to install a virtual environment to install project dependcies or install them normally
-  - requirements.txt contains a list of dependencies for scripts
-- In the same directory of the project compose up with "docker compose up -d" in a terminal
-- Run something like VSCode or similar for PostgreSQL/Python/SQLTools
-- Start PostgreSQL and Grafana with Docker Compose
-- Run wh3_analysis.sql once to create the database, role, tables, indexes, and permissions (running it again may overwrite data)
-- Make a connection to the PostgreSQL Project Database for extensions like PostgreSQL in VSCode
-- Configure Grafana's PostgreSQL data source to your local database
-  - Grafana may need a first time admin setup
-  - Remeber to use the passwords in your own .env such as GRAFANA_READER_PASSWORD
-- Import the two dashboard JSON files containing the visualization information
+- Install Docker Engine or Docker Desktop, and Python
+- Create .env using .env.example as a reference, such as for API keys, database credentials, and GRAFANA_READER_PASSWORD
+- Start PostgreSQL and Grafana using applicable commands 
+  - "docker compose up -d" in a terminal/PowerShell/CommandPrompt for the project directory
+- Execute wh3_analysis.sql against PostgreSQL's postgres database to create the project database
+  - "docker exec -i wh3-postgres psql -X -v ON_ERROR_STOP=1 -U wh3_user -d postgres < wh3_analysis.sql" in a terminal/CommandPrompt
+  - Running the creation script again will delete the database, delete the data only in the database (not in the dataset directory), and recreate wh3_analysis database
+- Create a Python virtual environment and install the dependencies listed in requirements.txt or optionally install the dependencies without the virtual environment
+- Run DataIngest.py from a terminal to integrate the four prepared CSV datasets into PostgreSQL: Build.csv, Discount.csv, Activity.csv, and Review.csv
+- Open Grafana at http://localhost:3000 and complete the initial administrator setup
+- Configure a PostgreSQL data source using postgres:5432 as the host, wh3_analysis as the database, and grafana_reader with the password configured in .env
+- Import PlayerActivity.json and PlayerReviews.json from the dashboard/ directory
 
 ## Data Collection
 
-- Run DataPull.py if you want to regenerate the data sets for Activity and Reviews 
-  - Fresh pulls will need an LLM for topic categorization of text, and manual cleanup
-- Download .csv for Price History from SteamDB if you don't want to use provided data set (a log in may be required)
-  - Fresh .csv would need to be manually edited, or LLM assisted for your work flow to match the reference .csv provided
-- Extract Builds from Patches on steamdb by selecting the whole table+values, copying, and pasting it to be converted into a table with a spreadsheet program (LibreOffice Calc works)
-  - Manually edit to rename or remove unnecessary columns/rows to match the reference .csv provided (such as excluding "No title" builds)
-- After data is acquired and put into the correct directory follow the exact names provided by the reference .csv for DataIngest.py when the database is ready
+The prepared CSV datasets are included in the repository. The following steps are optional for recreating datasets.
+
+- Run DataPull.py to collect player activity, and Steam reviews using the configured API settings
+  - You will need your own API key for (https://games-popularity.com)
+  - PlayerActivityRaw.csv will not include missing dates
+  - ReviewRaw.csv requires topic classification for newly collected, or updated reviews
+- Download the price history CSV from SteamDB to recreate Discount.csv and a SteamDB login may be required
+  - Manually or with LLM assistance to clean data to match the provided CSV
+- Collect build information from SteamDB's Patches page by copying the table into a spreadsheet application such as LibreOffice Calc
+  - Remove irrelevant entries, including builds without titles, and prepare the topics to match Build.csv
+- Save the four prepared datasets in datasets/, using the provided CSV files as references
+- Run DataIngest.py again to replace the existing database records with the prepared datasets
