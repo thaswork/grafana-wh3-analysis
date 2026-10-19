@@ -14,14 +14,14 @@ python3 python/DataIngest.py
 
 # Player Review and Activity Analysis for Warhammer 3 with Grafana
 
-I built this project to analyze player sentiment and activity in Total Warhammer 3, which just had its biggest release update. I wanted to focus on how reviews and player counts changed around developer releases.
+This project was born out of the previous Power BI analysis of player sentiment, and activity in Total Warhammer 3. Instead of Power BI, I wanted to shift things towards Grafana that would also include setting up a local data base, and use SQL for queries in Grafana.
 
-Using Power BI, I combined Steam reviews, historical player counts and developer release data. This made it possible to compare trends in player feedback and engagement over time.
+In additiona to using Grafana I made use of discount events to be readily visible with start, and end dates. This added another layer of events to see their impact on players, and the data included a final price of the discount for comparison.
 
 ![Player Activity with Releases](docs/player_activity_overview.png)
 
 ## Project Questions
-Similar questions are asked that were present in the previous project except with better integration of discount events as time series markers with Grafana for clearer analysis.
+Similar questions are asked that were present in the previous project except with better integration of discount events markers in Grafana.
 
 - What patterns appear in player activity and reviews over time?
 - How does player sentiment and engagement change around developer build releases?
@@ -49,11 +49,12 @@ Similar questions are asked that were present in the previous project except wit
 ## Workflow
 
 - Collected Steam review and player activity data through api with a Python script
-- Cleaned and transformed the datasets within Power BI
 - Used an LLM assisted process to identify common topics across +50,000 review texts
 - Kept and organized recurring topics into their own columns
-- Created DAX measures to compare review sentiment and player engagement
-- Created an interactive Power BI report
+- Performed some manual clean up in LibreOffice Calc
+- Established a local database with Docker and PostgreSQL
+- Connected the local relational database to Grafana
+- Used SQL to perform queries for interactive visuals in Grafana
 
 ### Player Review
 
@@ -61,12 +62,13 @@ I built the Player Review dashboard to look beyond the overall Steam rating and 
 
 - Filter reviews by topic and date
 - Compare review volume with positive recommendation percentage
-- View developer announcements alongside review activity
+- View developer build announcements alongside review activity
 - Compare sentiment before and after selected updates
+- Provide annotations for discount events and their final price
 
 ![Player Sentiment](docs/player_reviews_overview.png)
 
-One example "Hotfix 6.3.2" when filtering for Campaign and AI topics has the following:
+One example is "Hotfix 6.3.2" when filtering for Campaign and AI topics has the following:
 
 - Positive recommendations in the previous 7 days: 5.37%
 - Positive recommendations in the following 7 days: 52.97%
