@@ -1,8 +1,6 @@
 # Player Review and Activity Analysis for Warhammer 3 with Grafana
 
-This project was born out of the previous Power BI analysis of player sentiment, and activity in Total Warhammer 3. Instead of Power BI, I wanted to shift things towards Grafana that also included setting up a local data base, and using SQL for queries in Grafana.
-
-By using Grafana discount events were made more visible with start, and end dates more intuitively than with Power Bi. This added another layer of events to see their impact on players, and the data included a final price of the discount for comparison.
+This project was born out of the previous Power BI analysis of player sentiment, and activity in Total Warhammer 3. This project explores an existing dataset through a different toolset, particularly PostgreSQL and SQL, while introducing start and end annotations for discount events using Grafana. This added another layer of events to see their impact on players, and the data included a final price of the discount for comparison.
 
 ![Player Activity with Releases](docs/grafana_review_overview.png)
 
@@ -13,13 +11,14 @@ Similar questions are asked that were present in the previous project except wit
 - How does player sentiment and engagement change around developer build releases?
 - How does player sentiment differ across common review topics?
 - How much is player engagement affected by different types of build announcements?
-- What impact do discount events have on player activity over a period of time?
-- Does the final amount of the discount affect player activity?
-- Do the discount events affect player sentiment topics, such as for price or monetization?
-- What effect does having discounts events, and build announcements occuring in conjunction have on players?
+- What tendencies are revealed with discount events on player activity?
+- Do player activity patterns differ across discount events with different final prices?
+- Do the discount events influence player sentiment topics, such as for price or monetization?
+- What does having discounts events, and build announcements occuring in conjunction show for engagement and sentiment?
 
 ## Tools
 
+- Grafana
 - Docker
 - PostgreSQL
 - Python
@@ -30,15 +29,16 @@ Similar questions are asked that were present in the previous project except wit
 - Steam player reviews from 2024 through 2026: (https://store.steampowered.com/appreviews/1142710)
 - Historical player activity data from games-popularity: (https://games-popularity.com)
 - Developer announcements, discount events and release information from SteamDB: (https://steamdb.info/app/1142710/patchnotes/)
-- LLM assisted text filtering for player reviews, build announcements, and discount events
-- Manual cleanup of player reviews, build announcements, and discount events
+- LLM assisted text filtering for player reviews (Review.csv), build announcements (Build.csv), and discount events (Discount.csv)
+- Manual cleanup of Review.csv, Build.csv, and Discount.csv
+- Activity.csv columns may have to be manually renamed to follow UpperPascal
 
 ## Workflow
 
 - Collected Steam review and player activity data through api with a Python script
 - Used an LLM assisted process to identify common topics across +50,000 review texts
-- Kept and organized recurring topics into their own columns
-- Performed some manual clean up in LibreOffice Calc
+- Classified, and organized topics into their own columns
+- Performed some manual clean up in LibreOffice Calc for names and irrelevant data
 - Established a local database with Docker and PostgreSQL
 - Connected the local relational database to Grafana
 - Used SQL to perform queries for interactive visuals in Grafana
@@ -55,15 +55,15 @@ The Player Review dashboard retained its core functionalty present in the previo
 
 ![Player Sentiment](docs/grafana_review_overview.png)
 
-One example is constraining the topic's affect on player sentiment for the game's cost, such as for Monetization (reviews about strategies for payment or commercial practices) and Price (reviews about the actual affordability of the game). In the brief time span example there is only a small correlation, and generally the higher peaks for these topics are not within a discount event. This could suggest the impact of discounts on reviews involving cost is minor, and could be examined further for the discount's final cost. 
+One example is constraining the topic's affect on player sentiment for the game's cost, such as for Monetization (reviews about strategies for payment or commercial practices) and Price (reviews about the actual affordability of the game). In the brief time span example there is a small visible pattern where generally the higher peaks for these topics are not within a discount event. This could suggest the impact of discounts on reviews involving cost is minor, and could be examined further for the discount's final cost. 
 
-Lastly, the "Related Build Announcements" correctly shows that there aren't any builds that involve the selected topics.
+Lastly, the "Related Build Announcements" correctly shows that there aren't any builds that involve the selected topics for Monetization and Price.
 
 ![Player Sentiment](docs/grafana_review_discount.png)
 
 ### Player Activity
 
-player engagement has most of the features from the previous project in addition to annotations for Discount Events alongside Build Announcements.
+The project has most of the features from before, in addition to annotations for Discount Events alongside Build Announcements.
 
 - Daily player activity
 - Daily highs and lows
@@ -75,9 +75,9 @@ player engagement has most of the features from the previous project in addition
 
 ![Player Engagement](docs/grafana_activity_discount.png)
 
-## Key Findings
+## Key Findings and Analysis Questions
 
-Many of the findings were similar to the previous Power BI project.
+Many of the findings were similar to the previous Power BI project, and inspire future anaylsis.
 
 - Player activity follows a clear weekly cycle with stronger activity around weekends
   - Is there an opportunity here to improve engagement for the weekdays?
@@ -97,22 +97,19 @@ Similar limitations apply as from the previous project.
 - Limited time span of data between 2024 to 2026 due to reliable historical data missing before 2024
 - The analysis is observational and does not prove that releases caused changes in sentiment or player activity
 - While promotional/seasonal discount events are included, there may still be other marketing campaigns, weekends, and unrelated events also influenced the results
-- Dropping the category of "Other" helped to reduce data on topics from being consisted wit LLM assisted topic classification, but it can still introduce inconsistent categorization of the data
+- LLM assisted topic classification, but it can still introduce inconsistent categorization of the data
+- The database retains the topic of "Other" if there are other use cases, while the provided Grafana visuals exclude it for this project to prevent data skewing too much into a catch all topic
 - Steam reviewers may not represent the full player population
 - Short analysis windows can overlap with other build announcements or events
 
-## Reproduction
+
+## Local Setup
+
+If you have data ready, or want to use provided .csv this is the setup overview
 
 - Configure your .env following the .env.example
 - Recommended to install a virtual environment to install project dependcies or install them normally
   - requirements.txt contains a list of dependencies for scripts
-- Run DataPull.py if you want to regenerate the data sets for Activity and Reviews 
-  - Fresh pulls will need an LLM for topic categorization of text, and manual cleanup
-- Download .csv for Price History from SteamDB if you don't want to use provided data set (a log in may be required)
-  - Fresh .csv would need to be manually edited, or LLM assisted for your work flow to match the reference .csv provided
-- Extract Builds from Patches on steamdb by selecting the whole table+values, copying, and pasting it to be converted into a table with a spreadsheet program (LibreOffice Calc works)
-  - Manually edit to rename or remove unnecessary columns/rows to match the reference .csv provided (such as excluding "No title" builds)
-- After data is acquired and put into the correct directory follow the exact names provided by the reference .csv for DataIngest.py when the database is ready
 - In the same directory of the project compose up with "docker compose up -d" in a terminal
 - Run something like VSCode or similar for PostgreSQL/Python/SQLTools
 - Start PostgreSQL and Grafana with Docker Compose
@@ -122,3 +119,13 @@ Similar limitations apply as from the previous project.
   - Grafana may need a first time admin setup
   - Remeber to use the passwords in your own .env such as GRAFANA_READER_PASSWORD
 - Import the two dashboard JSON files containing the visualization information
+
+## Data Collection
+
+- Run DataPull.py if you want to regenerate the data sets for Activity and Reviews 
+  - Fresh pulls will need an LLM for topic categorization of text, and manual cleanup
+- Download .csv for Price History from SteamDB if you don't want to use provided data set (a log in may be required)
+  - Fresh .csv would need to be manually edited, or LLM assisted for your work flow to match the reference .csv provided
+- Extract Builds from Patches on steamdb by selecting the whole table+values, copying, and pasting it to be converted into a table with a spreadsheet program (LibreOffice Calc works)
+  - Manually edit to rename or remove unnecessary columns/rows to match the reference .csv provided (such as excluding "No title" builds)
+- After data is acquired and put into the correct directory follow the exact names provided by the reference .csv for DataIngest.py when the database is ready
