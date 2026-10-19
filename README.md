@@ -1,24 +1,10 @@
-python3.12-venv
-source .venv/bin/activate (run in terminal of the project's root)
-python3 python/DataIngest.py (run to start the virtual evironment that has the plugins so .py scripts can run)
-.venv/bin/python3 python/DataIngest.py (maybe an alternative)
-
-
-Manual Activation
-From running terminal at repository root:
-source .venv/bin/activate
-
-Then either script
-python3 python/DataPull.py
-python3 python/DataIngest.py
-
 # Player Review and Activity Analysis for Warhammer 3 with Grafana
 
-This project was born out of the previous Power BI analysis of player sentiment, and activity in Total Warhammer 3. Instead of Power BI, I wanted to shift things towards Grafana that would also include setting up a local data base, and use SQL for queries in Grafana.
+This project was born out of the previous Power BI analysis of player sentiment, and activity in Total Warhammer 3. Instead of Power BI, I wanted to shift things towards Grafana that also included setting up a local data base, and using SQL for queries in Grafana.
 
-In additiona to using Grafana I made use of discount events to be readily visible with start, and end dates. This added another layer of events to see their impact on players, and the data included a final price of the discount for comparison.
+By using Grafana discount events were made more visible with start, and end dates more intuitively than with Power Bi. This added another layer of events to see their impact on players, and the data included a final price of the discount for comparison.
 
-![Player Activity with Releases](docs/player_activity_overview.png)
+![Player Activity with Releases](docs/grafana_review_overview.png)
 
 ## Project Questions
 Similar questions are asked that were present in the previous project except with better integration of discount events markers in Grafana.
@@ -58,7 +44,7 @@ Similar questions are asked that were present in the previous project except wit
 
 ### Player Review
 
-I built the Player Review dashboard to look beyond the overall Steam rating and examine what players were actually discussing that included the following:
+The Player Review dashboard retained its core functionalty present in the previous project that looked beyond the overall Steam rating and examined what players were actually discussing. With the better visual integration of discount events these could be better analyzed for affect on activity in additiona to build announcements.
 
 - Filter reviews by topic and date
 - Compare review volume with positive recommendation percentage
@@ -66,33 +52,31 @@ I built the Player Review dashboard to look beyond the overall Steam rating and 
 - Compare sentiment before and after selected updates
 - Provide annotations for discount events and their final price
 
-![Player Sentiment](docs/player_reviews_overview.png)
+![Player Sentiment](docs/grafana_review_overview.png)
 
-One example is "Hotfix 6.3.2" when filtering for Campaign and AI topics has the following:
+One example is constraining the topic's affect on player sentiment for the game's cost, such as for Monetization (reviews about strategies for payment or commercial practices) and Price (reviews about the actual affordability of the game). In the brief time span example there is only a small correlation, and generally the higher peaks for these topics are not within a discount event. This could suggest the impact of discounts on reviews involving cost is minor, and could be examined further for the discount's final cost. 
 
-- Positive recommendations in the previous 7 days: 5.37%
-- Positive recommendations in the following 7 days: 52.97%
+Lastly, the "Related Build Announcements" correctly shows that there aren't any builds that involve the selected topics.
 
-This implies the hotfix that addressed the player's feedback, and that it was received very positively over following the week.
-
-![Player Sentiment](docs/player_reviews_campaign_ai.png)
+![Player Sentiment](docs/grafana_review_discount.png)
 
 ### Player Activity
 
-I also wanted to understand whether major updates and announcements were associated with changes in player engagement, so this dashboard includes the following:
+player engagement has most of the features from the previous project in addition to annotations for Discount Events alongside Build Announcements.
 
 - Daily player activity
 - Daily highs and lows
 - 7 day averages
 - 30 day averages
-- Announcement and release filters
-- Comparisons between release dates and surrounding activity
+- Interactive annotations for Build Announcement and Discount Event
 
-![Player Engagement](docs/player_activity_events.png)
+![Player Engagement](docs/grafana_activity_overview.png)
 
-![Player Engagement](docs/player_activity_periodic_content.png)
+![Player Engagement](docs/grafana_activity_discount.png)
 
 ## Key Findings
+
+Many of the findings were similar to the previous Power BI project.
 
 - Player activity follows a clear weekly cycle with stronger activity around weekends
   - Is there an opportunity here to improve engagement for the weekdays?
@@ -107,9 +91,32 @@ I also wanted to understand whether major updates and announcements were associa
 
 ## Limitations
 
-- Limited time span of data between 2024 to 2026
+Similar limitations apply
+- Limited time span of data between 2024 to 2026 due to reliable historical data missing before 2024
 - The analysis is observational and does not prove that releases caused changes in sentiment or player activity
-- Promotional events, seasonal effects, weekends, and unrelated events also influence the results
-- LLM assisted topic classification can introduce inconsistent or ambiguous labels
+- While promotional/seasonal discount events are included, there may still be other marketing campaigns, weekends, and unrelated events also influenced the results
+- Dropping the category of "Other" helped to reduce data on topics from being consisted wit LLM assisted topic classification, but it can still introduce inconsistent categorization of the data
 - Steam reviewers may not represent the full player population
-- Short analysis windows can overlap with other announcements or events
+- Short analysis windows can overlap with other build announcements or events
+
+## Reproduction
+
+- Configure your .env following the .env.example
+- Recommended to install a virtual environment to install project dependcies or install them normally
+  - requirements.txt contains a list of dependencies for scripts
+- Run DataPull.py if you want to regenerate the data sets for Activity and Reviews 
+  - Fresh pulls will need an LLM for topic categorization of text, and manual cleanup
+- Download .csv for Price History from SteamDB if you don't want to use provided data set (a log in may be required)
+  - Fresh .csv would need to be manually edited, or LLM assisted for your work flow to match the reference .csv provided
+- Extract Builds from Patches on steamdb by selecting the whole table+values, copying, and pasting it to be converted into a table with a spreadsheet program (LibreOffice Calc works)
+  - Manually edit to rename or remove unnecessary columns/rows to match the reference .csv provided (such as excluding "No title" builds)
+- After data is acquired and put into the correct directory follow the exact names provided by the reference .csv for DataIngest.py when the database is ready
+- In the same directory of the project compose up with "docker compose up -d" in a terminal
+- Run something like VSCode or similar for PostgreSQL/Python/SQLTools
+- Start PostgreSQL and Grafana with Docker Compose
+- Run wh3_analysis.sql once to create the database, role, tables, indexes, and permissions (running it again may overwrite data)
+- Make a connection to the PostgreSQL Project Database for extensions like PostgreSQL in VSCode
+- Configure Grafana's PostgreSQL data source to your local database
+  - Grafana may need a first time admin setup
+  - Remeber to use the passwords in your own .env such as GRAFANA_READER_PASSWORD
+- Import the two dashboard JSON files containing the visualization information
