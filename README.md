@@ -31,7 +31,7 @@ These questions are similar to those from the previous project, but with better 
 - Developer announcements, discount events, and release information from SteamDB: (https://steamdb.info/app/1142710/patchnotes/)
 - LLM-assisted text filtering for player reviews (Review.csv), build announcements (Build.csv), and discount events (Discount.csv)
 - Manual cleanup of Review.csv, Build.csv, and Discount.csv
-- Activity.csv columns may have to be manually renamed to follow UpperPascal
+- PlayerActivity.csv columns may have to be manually renamed to follow UpperPascal
 
 ## Workflow
 
@@ -114,7 +114,7 @@ The repository includes four prepared CSV datasets, the PostgreSQL creation scri
   - Run `docker exec -i wh3-postgres psql -X -v ON_ERROR_STOP=1 -U wh3_user -d postgres < wh3_analysis.sql` in a terminal or Command Prompt
   - Running the creation script again will delete and recreate the `wh3_analysis` database, removing its existing data but not the CSV files in the `datasets/` directory
 - Create a Python virtual environment and install the dependencies listed in `requirements.txt`, or install them without a virtual environment
-- Run `DataIngest.py` from a terminal to load the four prepared CSV datasets into PostgreSQL: `Build.csv`, `Discount.csv`, `Activity.csv`, and `Review.csv`
+- Run `DataIngest.py` from a terminal to load the four prepared CSV datasets into PostgreSQL: `Build.csv`, `Discount.csv`, `PlayerActivity.csv`, and `Review.csv`
 - Open Grafana at http://localhost:3000 and complete the initial administrator setup
 - Configure a PostgreSQL data source using `postgres:5432` as the host, `wh3_analysis` as the database, and `grafana_reader` with the password configured in `.env`
 - Import `PlayerActivity.json` and `PlayerReviews.json` from the `dashboard/` directory
