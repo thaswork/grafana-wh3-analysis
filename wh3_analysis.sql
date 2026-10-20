@@ -66,7 +66,6 @@ CREATE TABLE public."PlayerActivity" (
 CREATE TABLE public."Review" (
     "ReviewId" integer NOT NULL,
     "Language" text NOT NULL,
-    "Text" text,
     "TimestampUpdated" timestamp with time zone NOT NULL,
     "IsVotedUp" boolean NOT NULL,
     "IsTopicAi" boolean NOT NULL,

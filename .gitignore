@@ -1,5 +1,7 @@
 .env
 
+!wh3_data_only.sql
+
 .venv/
 __pycache__/
 *.pyc
