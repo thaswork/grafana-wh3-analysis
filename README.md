@@ -45,7 +45,7 @@ These questions are similar to those from the previous project, but with better 
 
 ### Player Review
 
-The Player Review dashboard retained its core functionality from the previous project, looking beyond the overall Steam rating to examine what players were actually discussing. Integrating start and end dates for discount events improved the visual analysis of player sentiment alongside build announcements.
+The [Player Review dashboard](https://enyo.outboundstudios.com:30095/d/adln5fk/player-reviews?from=2024-01-29T05:00:00.000Z&to=2026-10-06T03:59:59.000Z&timezone=browser&var-Topic=$__all) retained its core functionality from the previous project, looking beyond the overall Steam rating to examine what players were actually discussing. Integrating start and end dates for discount events improved the visual analysis of player sentiment alongside build announcements.
 
 - Filter reviews by topic and date
 - Compare review volume with positive recommendation percentage
@@ -63,7 +63,7 @@ The "Related Build Announcements" panel correctly shows no build announcements, 
 
 ### Player Activity
 
-The project has most of the features from the previous project, in addition to annotations for Discount Events alongside Build Announcements.
+The [Player Activity dashboard](https://enyo.outboundstudios.com:30095/d/ad6twdl/player-activity?from=2024-01-29T05:00:00.000Z&to=2026-10-06T03:59:59.000Z&timezone=browser) has most of the features from the last project, in addition to annotations for Discount Events alongside Build Announcements.
 
 - Daily player activity
 - Daily highs and lows
