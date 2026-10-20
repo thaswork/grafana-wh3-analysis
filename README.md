@@ -106,18 +106,23 @@ Similar limitations apply as in the previous project.
 
 The repository includes four prepared CSV datasets, the PostgreSQL creation script, and both Grafana dashboards. These can be used to recreate the project locally. VS Code with PostgreSQL and SQLTools extensions are optional.
 
-- Install Docker Engine or Docker Desktop and Python
+- Install Python 3.13+
+- Install Docker Desktop for Windows/macOS (includes Docker Engine and Docker Compose), or Docker Engine with the Docker Compose plugin for Linux
 - Create `.env` using `.env.example` as a reference, including API keys, database credentials, and `GRAFANA_READER_PASSWORD`
 - Start PostgreSQL and Grafana using the applicable command
   - Run `docker compose up -d` in a terminal, PowerShell, or Command Prompt from the project directory
 - Execute `wh3_analysis.sql` against PostgreSQL's `postgres` database to create the project database
   - Run `docker exec -i wh3-postgres psql -X -v ON_ERROR_STOP=1 -U wh3_user -d postgres < wh3_analysis.sql` in a terminal or Command Prompt
+  - Alternative for PowerShell `cmd /c "docker exec -i wh3-postgres psql -X -v ON_ERROR_STOP=1 -U wh3_user -d postgres < wh3_analysis.sql"`
   - Running the creation script again will delete and recreate the `wh3_analysis` database, removing its existing data but not the CSV files in the `datasets/` directory
-- Create a Python virtual environment and install the dependencies listed in `requirements.txt`, or install them without a virtual environment
+- Create a Python virtual environment and install the dependencies listed in `requirements.txt`, or install them without a .venv
+  - Example terminal commands for .venv from the project directory `python3 -m venv .venv` and then `source .venv/bin/activate` then install requirements `python -m pip install -r requirements.txt`
+  - For Windows PowerShell if needing to use the .venv without activation `.\.venv\Scripts\python.exe -m pip install -r requirements.txt`
 - Run `DataIngest.py` from a terminal to load the four prepared CSV datasets into PostgreSQL: `Build.csv`, `Discount.csv`, `PlayerActivity.csv`, and `Review.csv`
+  - Alternative for Windows PowerShell if using a .venv `.\.venv\Scripts\python.exe python\DataIngest.py`
 - Open Grafana at http://localhost:3000 and complete the initial administrator setup
 - Configure a PostgreSQL data source using `postgres:5432` as the host, `wh3_analysis` as the database, and `grafana_reader` with the password configured in `.env`
-- Import `PlayerActivity.json` and `PlayerReviews.json` from the `dashboard/` directory
+- Import `PlayerActivity.json` and `PlayerReviews.json` from the `dashboard/` directory into Grafana's dashboards
 
 ## Data Collection
 
