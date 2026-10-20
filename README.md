@@ -1,5 +1,11 @@
 # Player Review and Activity Analysis for Warhammer 3 with Grafana
 
+[Interactive Dashboard for Player Reviews](https://enyo.outboundstudios.com:30095/d/adln5fk/player-reviews?from=2024-01-29T05:00:00.000Z&to=2026-10-06T03:59:59.000Z&timezone=browser&var-Topic=$__all)
+
+[Interactive Dashboard for Player Activity](https://enyo.outboundstudios.com:30095/d/ad6twdl/player-activity?from=2024-01-29T05:00:00.000Z&to=2026-10-06T03:59:59.000Z&timezone=browser)
+
+_If an annotation marker doesn't appear on startup, like Build Announcements, then toggle it off and on._
+
 This project grew out of the [previous Power BI analysis](https://github.com/thaswork/powerbi-wh3-analysis) of player sentiment and activity in Total Warhammer 3. It explores an existing dataset through a different toolset using PostgreSQL and SQL. Grafana introduces start and end annotations for discount events, providing another view of player trends and including final discounted prices for comparison.
 
 ![Player Activity with Releases](docs/grafana_review_overview.png)
