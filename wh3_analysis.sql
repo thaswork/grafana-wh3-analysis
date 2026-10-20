@@ -2,8 +2,6 @@
 -- Recreates wh3_analysis and deletes any existing data.
 -- Database version 18.6 (Debian 18.6-1.pgdg13+2)
 
-\getenv grafana_password GRAFANA_READER_PASSWORD
-
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'grafana_reader') THEN
@@ -12,7 +10,7 @@ BEGIN
 END
 $$;
 
-ALTER ROLE grafana_reader WITH LOGIN PASSWORD :'grafana_password';
+ALTER ROLE grafana_reader WITH LOGIN PASSWORD 'grafana_password';
 
 DROP DATABASE IF EXISTS wh3_analysis WITH (FORCE);
 CREATE DATABASE wh3_analysis OWNER wh3_user;
