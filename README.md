@@ -1,6 +1,6 @@
 # Player Review and Activity Analysis for Warhammer 3 with Grafana
 
-This project grew out of the previous Power BI analysis of player sentiment and activity in Total Warhammer 3. It explores an existing dataset through a different toolset using PostgreSQL and SQL. Grafana introduces start and end annotations for discount events, providing another view of player trends and including final discounted prices for comparison.
+This project grew out of the [previous Power BI analysis](https://github.com/thaswork/powerbi-wh3-analysis) of player sentiment and activity in Total Warhammer 3. It explores an existing dataset through a different toolset using PostgreSQL and SQL. Grafana introduces start and end annotations for discount events, providing another view of player trends and including final discounted prices for comparison.
 
 ![Player Activity with Releases](docs/grafana_review_overview.png)
 
